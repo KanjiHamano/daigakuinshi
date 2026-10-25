@@ -1,0 +1,1533 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>応化 院試情報共有（β版）</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap">
+<style>
+/* Layout: 1160px max container. Sticky header → page body. Detail pages = main + right aux nav (2 columns on PC, 1 column on phones). */
+:root{
+  color-scheme:light;
+  --bg:#F5F9FF; --surface:#FFFFFF; --surface-2:#EDF4FF; --fg:#172C48; --muted:#53657D; --line:#D9E5F4;
+  --accent:#2164D7; --accent-strong:#174CA6; --accent-soft:#E8F1FF; --on-accent:#FFFFFF;
+  --demo-bg:#FBF1DA; --demo-fg:#664500; --demo-line:#E3C98B; --danger:#A3352B; --danger-soft:#FBE9E6;
+  --bar-1:#2164D7; --bar-2:#6297ED; --bar-3:#B4D0FF;
+  --font:"BIZ UDPGothic","Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic","Meiryo",system-ui,sans-serif;
+  --radius:8px; --hh:112px; --maxw:1160px;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:var(--hh)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);font-size:16px;line-height:1.75;-webkit-text-size-adjust:100%}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--surface)}
+body.no-scroll{overflow:hidden}
+h1,h2,h3,h4{line-height:1.4;text-wrap:balance;margin:0}
+p{margin:0}
+ul,ol{margin:0;padding:0}
+a{color:var(--accent-strong)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.container{max-width:var(--maxw);margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+[id]{scroll-margin-top:var(--hh)}
+.icon{width:1.25em;height:1.25em;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- Header ---------- */
+.site-header{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:var(--surface);border-bottom:1px solid var(--line)}
+.demo-strip{background:var(--demo-bg);color:var(--demo-fg);border-bottom:1px solid var(--demo-line);font-size:13px;line-height:1.5}
+.demo-strip-in{display:flex;flex-wrap:wrap;gap:4px 16px;padding-block:5px}
+.demo-strip strong{font-weight:700}
+.header-in{display:flex;align-items:center;gap:16px;min-height:72px;padding-block:8px}
+.brand{display:flex;flex-direction:column;gap:2px;text-decoration:none;color:var(--fg);margin-right:auto;min-width:0}
+.brand-name{font-weight:700;font-size:19px;letter-spacing:.02em;white-space:nowrap}
+.brand-name small{font-size:13px;color:var(--muted);font-weight:400;margin-left:6px}
+.badges{display:flex;gap:6px;flex-wrap:wrap}
+.badge{display:inline-flex;align-items:center;font-size:12px;line-height:1;padding:4px 7px;border-radius:4px;border:1px solid var(--line);color:var(--muted);background:var(--surface)}
+.badge-beta{border-color:var(--accent);color:var(--accent-strong);font-weight:700}
+.gnav{display:flex;align-items:stretch;gap:2px}
+.gnav-item{position:relative;display:flex}
+.gnav-link{display:flex;align-items:center;gap:4px;padding:0 12px;min-height:44px;text-decoration:none;color:var(--fg);border-radius:6px;font-size:15px;white-space:nowrap;border-bottom:3px solid transparent}
+.gnav-link:hover{background:var(--surface-2)}
+.gnav-link.is-current{color:var(--accent-strong);font-weight:700;border-bottom-color:var(--accent);border-radius:6px 6px 0 0}
+.gnav-link .icon{width:14px;height:14px}
+.gnav-sub{display:none;position:absolute;top:100%;left:0;min-width:240px;list-style:none;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 8px 24px rgba(0,0,0,.08);padding:6px;z-index:5}
+.gnav-item.has-sub:hover .gnav-sub,.gnav-item.has-sub:focus-within .gnav-sub{display:block}
+.gnav-sub a{display:flex;align-items:center;min-height:40px;padding:6px 10px;border-radius:6px;text-decoration:none;color:var(--fg);font-size:15px}
+.gnav-sub a:hover{background:var(--surface-2)}
+.gnav-sub a[aria-current="page"]{color:var(--accent-strong);font-weight:700;background:var(--accent-soft)}
+.header-actions{display:flex;gap:6px}
+.icon-btn{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-width:48px;min-height:48px;padding:4px 6px;border:1px solid var(--line);border-radius:8px;background:var(--surface);cursor:pointer;font-size:11px;line-height:1.2}
+.icon-btn[aria-expanded="true"]{background:var(--accent-soft);border-color:var(--accent)}
+.icon-btn .icon{width:22px;height:22px}
+.mobile-search{padding-block:0 12px}
+
+/* ---------- Search ---------- */
+.search{position:relative;width:240px}
+.mobile-search .search{width:100%}
+.search-field{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:8px;background:var(--bg);padding:0 4px 0 10px;min-height:44px}
+.search-field:focus-within{border-color:var(--accent);outline:2px solid var(--accent-soft)}
+.search-field input{flex:1;min-width:0;border:0;background:transparent;padding:8px 0;font-size:15px;outline:none}
+.search-clear{border:0;background:transparent;min-width:36px;min-height:36px;border-radius:6px;cursor:pointer;color:var(--muted);display:flex;align-items:center;justify-content:center}
+.search-clear:hover{background:var(--surface-2)}
+.search-panel{position:absolute;right:0;top:calc(100% + 6px);width:min(400px,calc(100vw - 32px));background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 10px 30px rgba(0,0,0,.12);padding:8px;z-index:50}
+.mobile-search .search-panel{position:static;width:100%;margin-top:8px;box-shadow:none}
+.search-count{font-size:13px;color:var(--muted);padding:4px 8px}
+.search-results{list-style:none;max-height:340px;overflow:auto}
+.search-results button{width:100%;text-align:left;display:flex;flex-direction:column;gap:0;padding:8px 10px;min-height:48px;border:0;background:transparent;border-radius:6px;cursor:pointer}
+.search-results button:hover,.search-results button:focus-visible{background:var(--surface-2)}
+.search-results .r-title{font-weight:700;font-size:15px}
+.search-results .r-cat{font-size:13px;color:var(--muted)}
+.search-results mark{background:var(--accent-soft);color:inherit;border-radius:2px}
+.search-empty{padding:8px;font-size:14px;display:grid;gap:8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px;min-height:36px;cursor:pointer;font-size:14px}
+.chip:hover{border-color:var(--accent)}
+
+/* ---------- Drawer ---------- */
+.drawer-backdrop{position:fixed;inset:0;background:rgba(10,20,20,.45);z-index:70}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(360px,88vw);background:var(--surface);z-index:71;display:flex;flex-direction:column;box-shadow:-8px 0 30px rgba(0,0,0,.15);padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px);animation:slidein .18s ease-out}
+@keyframes slidein{from{transform:translateX(24px)}to{transform:none}}
+@media (prefers-reduced-motion:reduce){.drawer{animation:none}}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;padding:10px 12px 10px 16px;border-bottom:1px solid var(--line)}
+.drawer-head h2{font-size:16px}
+.drawer-body{overflow:auto;padding:8px 8px 24px;flex:1}
+.drawer-note{margin:12px 8px 0;font-size:13px;color:var(--muted)}
+.dnav{list-style:none;display:grid;gap:2px}
+.dnav-link{display:flex;align-items:center;gap:10px;min-height:48px;padding:8px 12px;border-radius:8px;text-decoration:none;color:var(--fg);font-size:16px}
+.dnav-link:hover{background:var(--surface-2)}
+.dnav-link[aria-current="page"]{background:var(--accent-soft);color:var(--accent-strong);font-weight:700;box-shadow:inset 3px 0 0 var(--accent)}
+.dnav-sub{list-style:none;display:grid;gap:2px;padding:2px 0 6px 18px}
+.dnav-sub .dnav-link{font-size:15px;min-height:44px}
+
+/* ---------- Accordion (shared: FAQ, materials, drawer, footer, TOC) ---------- */
+.acc{border-bottom:1px solid var(--line)}
+.acc-h{font-size:inherit;font-weight:inherit;margin:0}
+.acc-btn{width:100%;display:flex;align-items:center;gap:10px;text-align:left;min-height:52px;padding:10px 12px;border:0;background:transparent;cursor:pointer;border-radius:8px;font-weight:700;font-size:16px;line-height:1.5}
+.acc-btn:hover{background:var(--surface-2)}
+.acc-title{flex:1;min-width:0;display:flex;align-items:center;gap:10px}
+.acc-meta{font-size:13px;font-weight:400;color:var(--muted);white-space:nowrap}
+.acc-state{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:400;color:var(--muted);white-space:nowrap}
+.acc-state .icon{width:20px;height:20px;transition:transform .15s}
+.acc.is-open > .acc-h .acc-state .icon{transform:rotate(180deg)}
+.acc.is-open > .acc-h .acc-btn{color:var(--accent-strong)}
+@media (prefers-reduced-motion:reduce){.acc-state .icon{transition:none}}
+.acc-panel{padding:4px 12px 16px}
+.acc--nav{border-bottom:0}
+.acc--nav .acc-btn{min-height:48px;font-weight:400;padding:8px 12px}
+.acc--nav.is-current > .acc-h .acc-btn{font-weight:700;color:var(--accent-strong)}
+.acc--nav .acc-panel{padding:0}
+.acc-group{border-top:1px solid var(--line)}
+.acc--box{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
+.acc--box .acc-panel{padding:0 16px 14px}
+
+/* ---------- Generic ---------- */
+main{display:block;min-height:60vh}
+.page{padding-block:20px 56px}
+.crumbs ol{list-style:none;display:flex;flex-wrap:wrap;gap:4px 6px;font-size:14px;color:var(--muted)}
+.crumbs li{display:flex;align-items:center;gap:6px}
+.crumbs li+li::before{content:"›";color:var(--muted)}
+.crumbs a{color:var(--muted);text-decoration:underline;text-underline-offset:3px;display:inline-flex;min-height:32px;align-items:center}
+.crumbs [aria-current]{color:var(--fg)}
+.page-head{display:grid;gap:10px;margin:14px 0 20px}
+.page-head h1{font-size:clamp(24px,3.2vw,30px)}
+.page-head h1:focus{outline:none}
+.lead{color:var(--fg);max-width:44em}
+.eyebrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px;color:var(--muted);font-weight:700;letter-spacing:.04em}
+.part-tag{display:inline-flex;align-items:center;gap:6px;padding:3px 8px;border-radius:4px;background:var(--accent-soft);color:var(--accent-strong);font-size:13px;font-weight:700}
+.part-tag.p2{background:var(--surface-2);color:var(--fg);border:1px dashed var(--muted)}
+.tag{display:inline-flex;align-items:center;font-size:12px;line-height:1.3;padding:3px 7px;border-radius:4px;border:1px solid var(--line);color:var(--muted);font-weight:400;letter-spacing:0}
+.demo-tag{display:inline-flex;align-items:center;gap:4px;font-size:12px;line-height:1.3;padding:3px 8px;border-radius:4px;background:var(--demo-bg);color:var(--demo-fg);border:1px solid var(--demo-line);font-weight:700;white-space:nowrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:10px 18px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:var(--on-accent);font-weight:700;text-decoration:none;cursor:pointer;font-size:16px}
+.btn:hover{background:var(--accent-strong);border-color:var(--accent-strong)}
+.btn-sub{background:var(--surface);color:var(--accent-strong)}
+.btn-sub:hover{background:var(--accent-soft);color:var(--accent-strong)}
+.btn[disabled],.btn[aria-disabled="true"]{background:var(--surface-2);border:1px dashed var(--muted);color:var(--muted);cursor:not-allowed}
+.btn-sm{min-height:44px;padding:8px 14px;font-size:15px}
+.section{margin-top:44px}
+.section-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 16px;margin-bottom:16px}
+.section-head h2{font-size:22px}
+.section-head p{color:var(--muted);font-size:15px;flex-basis:100%}
+.note{font-size:14px;color:var(--muted)}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+.demo-box{background:var(--demo-bg);border:1px solid var(--demo-line);color:var(--demo-fg);border-radius:var(--radius);padding:14px 16px;display:grid;gap:6px;font-size:15px}
+.demo-box strong{font-size:16px}
+.demo-box ul{padding-left:1.2em;display:grid;gap:2px}
+
+/* ---------- Cards ---------- */
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;list-style:none}
+.cards.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.card-link{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;height:100%;padding:16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);text-decoration:none;color:var(--fg);min-height:88px}
+.card-link:hover{border-color:var(--accent);background:var(--surface)}
+.card-link:hover .card-arrow{transform:translateX(3px)}
+.card-ico{width:44px;height:44px;border-radius:8px;background:var(--accent-soft);color:var(--accent-strong);display:flex;align-items:center;justify-content:center}
+.card-ico .icon{width:24px;height:24px}
+.card-body{display:grid;gap:2px;min-width:0}
+.card-title{font-weight:700;font-size:17px}
+.card-desc{font-size:14px;color:var(--muted);line-height:1.6}
+.card-arrow{color:var(--accent);transition:transform .15s}
+@media (prefers-reduced-motion:reduce){.card-arrow{transition:none}}
+.card-num{font-size:12px;color:var(--muted)}
+
+/* ---------- Home ---------- */
+.intro{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:20px 32px;align-items:center;padding-block:28px 8px}
+.intro h1{font-size:clamp(24px,3.4vw,32px)}
+.intro-text{display:grid;gap:12px}
+.intro-actions{display:grid;gap:10px}
+.cta{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding:14px 16px;border-radius:var(--radius);border:1px solid var(--accent);text-decoration:none;min-height:72px}
+.cta-primary{background:var(--accent);color:var(--on-accent)}
+.cta-primary:hover{background:var(--accent-strong)}
+.cta-secondary{background:var(--surface);color:var(--accent-strong)}
+.cta-secondary:hover{background:var(--accent-soft)}
+.cta-t{font-weight:700;font-size:17px;display:block}
+.cta-d{font-size:13px;display:block;opacity:.9}
+.cta .icon{width:24px;height:24px}
+.steps{list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;counter-reset:step}
+.step a{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;padding:16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);text-decoration:none;color:var(--fg);height:100%}
+.step a:hover{border-color:var(--accent)}
+.step-n{grid-row:span 2;width:36px;height:36px;border-radius:50%;border:2px solid var(--accent);color:var(--accent-strong);display:flex;align-items:center;justify-content:center;font-weight:700;font-variant-numeric:tabular-nums}
+.step-t{font-weight:700}
+.step-d{font-size:14px;color:var(--muted);line-height:1.6}
+.voices-entry{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:20px;align-items:start}
+.voices-entry .facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.fact{background:var(--surface-2);border-radius:8px;padding:10px 12px;display:grid;gap:0}
+.fact b{font-size:20px;font-variant-numeric:tabular-nums}
+.fact span{font-size:13px;color:var(--muted)}
+.qlist{list-style:none;display:grid;gap:6px;font-size:15px}
+.qlist li{display:flex;gap:8px;align-items:baseline}
+.qlist .qn{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:2.5em}
+.news{list-style:none;border-top:1px solid var(--line)}
+.news li{display:grid;grid-template-columns:110px 96px 1fr;gap:6px 14px;padding:12px 4px;border-bottom:1px solid var(--line);align-items:baseline}
+.news time{font-variant-numeric:tabular-nums;color:var(--muted);font-size:14px}
+
+/* ---------- Basic detail ---------- */
+.detail-grid{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:40px;align-items:start}
+.detail-main{min-width:0;max-width:780px}
+.meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:0;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);overflow:hidden}
+.meta div{padding:10px 14px;border-right:1px solid var(--line);min-width:0}
+.meta dt{font-size:12px;color:var(--muted)}
+.meta dd{margin:0;font-size:15px;font-weight:700}
+.meta .meta-link{display:flex;align-items:center;border-right:0}
+.summary{margin-top:24px;background:var(--accent-soft);border-radius:var(--radius);padding:16px 18px}
+.summary h2{font-size:17px;margin-bottom:6px;color:var(--accent-strong)}
+.summary ul{padding-left:1.3em;display:grid;gap:4px}
+.doc-sec{margin-top:36px}
+.doc-sec > h2{font-size:21px;padding-bottom:8px;border-bottom:2px solid var(--line);margin-bottom:14px}
+.doc-sec p+p{margin-top:10px}
+.prose{display:grid;gap:10px;max-width:42em}
+.bullets{padding-left:1.3em;display:grid;gap:6px}
+.numbered{padding-left:1.6em;display:grid;gap:6px}
+.facts-dl{display:grid;grid-template-columns:minmax(120px,200px) 1fr;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--surface);margin:0}
+.facts-dl dt,.facts-dl dd{padding:10px 14px;border-bottom:1px solid var(--line);margin:0}
+.facts-dl dt{background:var(--surface-2);font-size:14px;font-weight:700}
+.facts-dl > :nth-last-child(-n+2){border-bottom:0}
+.pending{display:inline-flex;align-items:center;font-size:12px;padding:1px 6px;border-radius:4px;border:1px dashed var(--muted);color:var(--muted);margin-left:6px;white-space:nowrap;vertical-align:2px}
+.timeline{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;position:relative;margin-top:6px}
+.tl-step{position:relative;padding:0 10px 0 0;display:grid;gap:6px;align-content:start}
+.tl-dot{display:flex;align-items:center;gap:0}
+.tl-dot b{width:34px;height:34px;flex:none;border-radius:50%;background:var(--accent);color:var(--on-accent);display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums;z-index:1}
+.tl-dot i{flex:1;height:2px;background:var(--accent);opacity:.5}
+.tl-step:last-child .tl-dot i{visibility:hidden}
+.tl-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px;display:grid;gap:2px}
+.tl-card strong{font-size:17px}
+.tl-when{font-size:14px;color:var(--demo-fg);background:var(--demo-bg);border-radius:4px;padding:1px 6px;justify-self:start}
+.tl-card span:last-child{font-size:14px;color:var(--muted)}
+.diagram{display:grid;grid-template-columns:minmax(0,1.3fr) auto minmax(0,1fr) auto minmax(0,1.1fr);gap:10px;align-items:stretch}
+.dg-box{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px;display:grid;gap:8px;align-content:start}
+.dg-box h3{font-size:15px}
+.dg-arrow{display:flex;align-items:center;justify-content:center;color:var(--accent)}
+.dg-arrow .icon{width:28px;height:28px}
+.subj-chips{display:flex;flex-wrap:wrap;gap:6px}
+.subj-chip{font-size:14px;padding:3px 8px;border-radius:4px;border:1px solid var(--line);background:var(--surface-2)}
+.subj-chip.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-strong);font-weight:700}
+.q-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.q-cell{text-align:center;font-size:13px;padding:4px 0;border-radius:4px;border:1px solid var(--line)}
+.q-cell.on{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.figcap{font-size:13px;color:var(--muted);margin-top:8px}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);-webkit-overflow-scrolling:touch}
+.table-wrap:focus-visible{outline-offset:0}
+table{border-collapse:collapse;width:100%;font-size:15px}
+.wide{min-width:640px}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+thead th{background:var(--surface-2);font-size:14px;white-space:nowrap}
+tbody tr:last-child th,tbody tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.scroll-hint{font-size:13px;color:var(--muted);margin-top:6px;display:none}
+.history{list-style:none;display:grid;gap:4px;font-size:15px}
+.history li{display:flex;gap:12px}
+.history time{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.report{margin-top:32px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:var(--radius);padding:16px;background:var(--surface)}
+.report p{font-size:15px}
+.pager{margin-top:28px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pager a{display:grid;gap:2px;padding:12px 14px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);text-decoration:none;color:var(--fg);min-height:64px}
+.pager a:hover{border-color:var(--accent)}
+.pager .dir{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:4px}
+.pager .next{text-align:right}
+.pager .next .dir{justify-content:flex-end}
+.pager b{font-size:16px}
+.aside-sticky{position:sticky;top:calc(var(--hh) + 16px);display:grid;gap:20px}
+.aside-block{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px}
+.aside-block h2{font-size:14px;color:var(--muted);padding:2px 8px 8px;letter-spacing:.04em}
+.toc,.side-list{list-style:none;display:grid;gap:2px}
+.toc a,.side-list a{display:flex;align-items:center;gap:8px;min-height:40px;padding:6px 8px;border-radius:6px;text-decoration:none;color:var(--fg);font-size:15px;line-height:1.45}
+.toc a:hover,.side-list a:hover{background:var(--surface-2)}
+.side-list a[aria-current="page"]{background:var(--accent-soft);color:var(--accent-strong);font-weight:700}
+.side-list .icon{color:var(--accent)}
+.toc-mobile{margin-top:16px}
+
+/* ---------- Voices ---------- */
+.filters{display:grid;gap:14px}
+.filter-row{display:grid;grid-template-columns:96px 1fr;gap:10px;align-items:center}
+.filter-label{font-weight:700;font-size:15px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{min-height:44px;padding:6px 14px;border-radius:8px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-size:15px;display:inline-flex;align-items:center;gap:6px}
+.seg button:hover{border-color:var(--accent)}
+.seg button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:700}
+.seg button[aria-pressed="true"]::before{content:"✓"}
+.state-demo{border-top:1px dashed var(--line);padding-top:12px;display:grid;gap:8px}
+.state-demo .seg button{border-style:dashed}
+.condition{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center}
+.count-big{display:grid;gap:0;padding-right:20px;border-right:1px solid var(--line)}
+.count-big b{font-size:34px;font-variant-numeric:tabular-nums;line-height:1.2}
+.count-big span{font-size:13px;color:var(--muted)}
+.cond-list{list-style:none;display:grid;gap:4px;font-size:15px}
+.cond-list li{display:flex;gap:8px}
+.cond-list .k{color:var(--muted);min-width:5.5em}
+.vgroup{margin-top:48px}
+.vgroup-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.vgroup-head .q-badge{font-size:13px;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:2px 8px;background:var(--surface)}
+.vgroup-head h2{font-size:22px}
+.vcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;display:grid;gap:12px}
+.vcard + .vcard{margin-top:14px}
+.vcard-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.vcard-head h3{font-size:18px;margin-right:auto}
+.vcard-desc{font-size:15px;color:var(--muted);max-width:46em}
+.barlist{list-style:none;display:grid;gap:10px}
+.bar-row{display:grid;grid-template-columns:minmax(7em,11em) minmax(0,1fr) 4.5em;gap:10px;align-items:center}
+.bar-label{font-size:15px}
+.bar-track{height:22px;background:var(--surface-2);border-radius:4px;overflow:hidden;position:relative}
+.bar-fill{display:block;height:100%;background:var(--bar-1);border-radius:0 4px 4px 0;min-width:2px}
+.bar-val{text-align:right;font-variant-numeric:tabular-nums;font-size:15px;font-weight:700}
+.bar-row.is-hidden .bar-track{background:repeating-linear-gradient(45deg,var(--surface-2) 0 6px,transparent 6px 12px);border:1px dashed var(--line)}
+.bar-hidden-txt{position:absolute;inset:0;display:flex;align-items:center;padding-left:8px;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden}
+.bar-row.is-hidden .bar-val{color:var(--muted);font-weight:400}
+.hidden-cell{color:var(--muted);font-size:13px;white-space:nowrap}
+.hidden-notice{display:flex;gap:10px;align-items:flex-start;padding:16px;border:1px dashed var(--muted);border-radius:var(--radius);background:repeating-linear-gradient(45deg,var(--surface) 0 10px,var(--surface-2) 10px 20px);color:var(--fg);font-size:15px}
+.hidden-notice .icon{color:var(--muted);margin-top:3px}
+.hidden-notice strong{display:block}
+.secondary-note{font-size:13px;color:var(--muted)}
+.rank-cell{display:flex;align-items:center;gap:8px;min-width:120px}
+.rank-cell .mini{flex:1;height:14px;background:var(--surface-2);border-radius:3px;overflow:hidden}
+.rank-cell .mini i{display:block;height:100%;background:var(--bar-1)}
+.rank-cell b{font-variant-numeric:tabular-nums;min-width:2.6em;text-align:right}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted)}
+.two-col{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+.two-col .vcard + .vcard{margin-top:0}
+.materials{list-style:none;display:grid;gap:6px}
+.materials li{display:flex;gap:8px;align-items:baseline;font-size:15px}
+.materials li::before{content:"";width:6px;height:6px;border-radius:2px;background:var(--accent);flex:none;transform:translateY(-2px)}
+.comments{list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.comment{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;display:grid;gap:10px;align-content:space-between}
+.comment p{font-size:15px}
+.comment footer{font-size:12px;color:var(--muted)}
+
+/* ---------- FAQ ---------- */
+.faq-layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:32px;align-items:start}
+.faq-cats{position:sticky;top:calc(var(--hh) + 16px)}
+.faq-cat{margin-bottom:28px}
+.faq-cat h2{font-size:19px;display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.faq-cat .acc{background:var(--surface)}
+.faq-cat .acc:first-of-type{border-top:1px solid var(--line)}
+.qa-q{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--accent-soft);color:var(--accent-strong);font-size:13px;flex:none}
+.qa-a{display:flex;gap:10px;font-size:15px}
+.qa-a .qa-q{background:var(--surface-2);color:var(--muted)}
+
+/* ---------- About / form ---------- */
+.about-grid{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:40px;align-items:start}
+.about-main{min-width:0;max-width:780px}
+.status-box{border:2px solid var(--accent);border-radius:var(--radius);padding:14px 16px;background:var(--accent-soft);display:grid;gap:4px}
+form{display:grid;gap:18px}
+.field{display:grid;gap:6px}
+.field label,.field .lbl{font-weight:700;font-size:15px;display:flex;gap:8px;align-items:center}
+.req,.opt{font-size:12px;font-weight:700;padding:1px 6px;border-radius:4px}
+.req{background:var(--danger-soft);color:var(--danger)}
+.opt{background:var(--surface-2);color:var(--muted)}
+.field input,.field select,.field textarea{width:100%;min-height:48px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-size:16px}
+.field textarea{min-height:140px;resize:vertical;line-height:1.6}
+.field [aria-invalid="true"]{border-color:var(--danger);outline:1px solid var(--danger)}
+.hint{font-size:13px;color:var(--muted)}
+.err{font-size:14px;color:var(--danger);font-weight:700}
+.form-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.future{border:1px dashed var(--line);border-radius:var(--radius);padding:12px 14px;font-size:14px;color:var(--muted)}
+
+/* ---------- Footer ---------- */
+.site-footer{background:var(--surface);border-top:1px solid var(--line);margin-top:24px}
+.footer-in{padding-block:32px 24px;display:grid;gap:24px}
+.fcols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
+.fcol h2{font-size:15px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.flinks{list-style:none;display:grid;gap:0}
+.flinks a{display:flex;align-items:center;min-height:40px;color:var(--fg);text-decoration:none;font-size:15px}
+.flinks a:hover{color:var(--accent-strong);text-decoration:underline}
+.flinks a[aria-current="page"]{color:var(--accent-strong);font-weight:700}
+.fbottom{border-top:1px solid var(--line);padding-top:16px;display:grid;gap:4px;font-size:14px;color:var(--muted)}
+.fbottom strong{color:var(--fg)}
+.facc .acc-panel{padding:0 12px 8px}
+
+/* ---------- Home (3 entrances) ---------- */
+.home{padding-block:48px 72px;display:grid;gap:36px}
+.home-hero{display:grid;gap:14px;max-width:46em}
+.home-hero h1{font-size:clamp(28px,4.2vw,40px);font-weight:700;letter-spacing:.02em;display:flex;align-items:center;flex-wrap:wrap;gap:12px}
+.home-hero h1:focus{outline:none}
+.home-beta{font-size:14px;font-weight:700;color:var(--accent-strong);border:1.5px solid var(--accent);border-radius:6px;padding:2px 8px;letter-spacing:0}
+.home-hero .lead{font-size:17px;line-height:1.8;color:var(--fg)}
+.home-entries{display:grid;gap:16px}
+.start-hint{justify-self:start;display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:16px;color:var(--accent-strong);background:var(--accent-soft);padding:8px 16px;border-radius:999px}
+.entries{list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.entry{display:flex;flex-direction:column;gap:14px;height:100%;padding:28px 24px 24px;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;text-decoration:none;color:var(--fg)}
+.entry:hover{border-color:var(--accent);box-shadow:0 6px 20px rgba(23,76,166,.10)}
+.entry.is-first{border:2px solid var(--accent)}
+.entry-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.entry-num{font-size:30px;font-weight:700;line-height:1;color:var(--accent-strong)}
+.entry-ico{width:48px;height:48px;border-radius:10px;background:var(--accent-soft);color:var(--accent-strong);display:flex;align-items:center;justify-content:center}
+.entry-ico .icon{width:26px;height:26px}
+.entry h2{font-size:24px;font-weight:700}
+.entry p{font-size:16px;line-height:1.7;color:var(--fg)}
+.entry-btn{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:52px;padding:12px 18px;border-radius:10px;background:var(--accent-soft);color:var(--accent-strong);font-weight:700;font-size:16px}
+.entry.is-first .entry-btn{background:var(--accent);color:var(--on-accent)}
+.entry:hover .entry-btn{background:var(--accent-strong);color:var(--on-accent)}
+.home-note{font-size:14px;color:var(--muted)}
+/* ---------- Back link / mini TOC / related ---------- */
+.back-link{display:inline-flex;align-items:center;gap:6px;min-height:44px;margin-top:10px;padding:0 14px 0 8px;font-weight:700;font-size:15px;color:var(--accent-strong);text-decoration:none;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.back-link:hover{border-color:var(--accent)}
+.page-end{margin-top:16px}
+.mini-toc{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:20px 0 4px}
+.mini-toc-lbl{font-size:14px;font-weight:700;color:var(--muted);margin-right:4px}
+.mini-toc a{display:inline-flex;align-items:center;min-height:40px;padding:6px 12px;background:var(--surface);border:1px solid var(--line);border-radius:8px;text-decoration:none;color:var(--fg);font-size:14px}
+.mini-toc a:hover{border-color:var(--accent);color:var(--accent-strong)}
+.related-links{margin-top:40px;padding-top:16px;border-top:1px solid var(--line)}
+.related-links h2{font-size:15px;color:var(--muted);margin-bottom:6px}
+.related-links ul{list-style:none;display:grid;gap:2px}
+.related-links a{display:inline-flex;align-items:center;min-height:40px;font-size:15px}
+.dnav-group{font-size:13px;color:var(--muted);font-weight:700;letter-spacing:.04em;margin:16px 12px 4px;padding-top:12px;border-top:1px solid var(--line)}
+.dnav-small .dnav-link{font-size:15px;min-height:44px}
+.fmain{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.fcol h3{font-size:15px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.site-footer .fcols{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:1023px){.entries{grid-template-columns:minmax(0,1fr)}.entry{padding:22px 20px 20px}.entry h2{font-size:22px}}
+@media (max-width:720px){.home{padding-block:28px 48px;gap:24px}.site-footer .fcols{grid-template-columns:minmax(0,1fr);gap:8px}.fmain{gap:16px}}
+
+/* ---------- Toast ---------- */
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:8px;z-index:90;font-size:15px;max-width:calc(100vw - 32px)}
+
+/* ---------- Responsive ---------- */
+@media (max-width:1023px){
+  .detail-grid,.about-grid{grid-template-columns:minmax(0,1fr)}
+  .detail-main,.about-main{max-width:none}
+  .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .comments{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .faq-layout{grid-template-columns:minmax(0,1fr)}
+  .faq-cats{position:static}
+}
+@media (max-width:720px){
+  :root{
+  color-scheme:light;--hh:104px}
+  .header-in{min-height:64px}
+  .brand-name{font-size:17px}
+  .intro,.voices-entry{grid-template-columns:minmax(0,1fr)}
+  .cards,.cards.two,.steps,.comments,.two-col{grid-template-columns:minmax(0,1fr)}
+  .voices-entry .facts{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .news li{grid-template-columns:auto 1fr;}
+  .news li p{grid-column:1 / -1}
+  .meta{grid-template-columns:minmax(0,1fr)}
+  .meta div{border-right:0;border-bottom:1px solid var(--line)}
+  .meta .meta-link{border-bottom:0;padding:12px 14px}
+  .timeline{grid-template-columns:minmax(0,1fr);gap:0}
+  .tl-step{grid-template-columns:34px minmax(0,1fr);gap:12px;padding:0 0 14px}
+  .tl-dot{flex-direction:column;align-self:stretch}
+  .tl-dot i{width:2px;height:auto;flex:1}
+  .diagram{grid-template-columns:minmax(0,1fr)}
+  .dg-arrow{transform:rotate(90deg);height:32px}
+  .scroll-hint{display:block}
+  .pager{grid-template-columns:minmax(0,1fr)}
+  .filter-row{grid-template-columns:minmax(0,1fr);gap:6px}
+  .condition{grid-template-columns:minmax(0,1fr);gap:12px}
+  .count-big{border-right:0;border-bottom:1px solid var(--line);padding:0 0 12px}
+  .bar-row{grid-template-columns:minmax(0,1fr) 4em;gap:4px 10px}
+  .bar-label{grid-column:1 / -1}
+  .fcols{grid-template-columns:minmax(0,1fr);gap:0}
+  .facts-dl{grid-template-columns:minmax(0,1fr)}
+  .facts-dl dt{border-bottom:0}
+  .facts-dl > :nth-last-child(2){border-bottom:0}
+  .vcard{padding:14px}
+  .section-head h2,.vgroup-head h2{font-size:20px}
+}
+@media (max-width:380px){
+  .badges .badge{font-size:11px;padding:3px 5px}
+  .icon-btn{min-width:44px}
+  .voices-entry .facts{grid-template-columns:minmax(0,1fr)}
+}
+
+.subject-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;list-style:none}
+.subject-card{display:flex;flex-direction:column;align-items:flex-start;padding:24px;gap:12px;border:1px solid var(--line);border-radius:14px;background:white;color:var(--fg);text-decoration:none;height:100%;box-shadow:0 4px 18px #174ca606;transition:transform .15s,border-color .15s}
+.subject-card:hover{transform:translateY(-3px);border-color:var(--accent)}
+.subject-card h3{font-size:21px}.subject-card p{color:var(--muted);font-size:14px}.subject-card .chips{margin-top:auto}.subject-card .tag{background:var(--surface-2);color:var(--accent-strong)}
+.subject-code{font-size:12px;font-weight:700;letter-spacing:.12em;color:var(--accent)}
+.subject-shortcuts{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0}.subject-shortcuts a{padding:10px 14px;background:var(--surface);border:1px solid var(--line);border-radius:8px;text-decoration:none;font-size:14px;min-height:44px}
+.subject-placeholder{padding:24px;border:1px dashed #9CBCEB;background:#F8FBFF;border-radius:10px;display:grid;gap:8px;color:var(--muted)}
+.subject-placeholder .tag{justify-self:start}.subject-placeholder h3{color:var(--fg);font-size:17px}.subject-placeholder+.subject-placeholder{margin-top:12px}
+.part-tag.p2{background:var(--accent-soft);border:1px solid var(--line);color:var(--accent-strong)}
+@media(min-width:1024px) and (max-width:1200px){.gnav-link{padding:0 8px;font-size:14px}.search{width:180px}.header-in{gap:10px}.brand-name{font-size:17px}}
+@media(max-width:720px){.subject-grid{grid-template-columns:1fr}.subject-card{padding:20px}.fcols{grid-template-columns:1fr}}
+</style>
+
+</head><body><div id="root"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js"></script>
+
+<!-- =====================================================================
+  1) 文言・デモデータ（差し替え用）
+  本文・項目・アンケートの架空データはこのブロックだけを編集すれば差し替えられます。
+====================================================================== -->
+<script>
+window.SITE_CONTENT = {
+  site: {
+    name: "応化 院試情報共有",
+    badges: ["β版", "学科内向け"],
+    demoNote: "レイアウト確認用デモ／実際の閲覧制限は未実装",
+    unofficial: "大学・学科の公式サイトではありません",
+    operator: "発起人＋応用化学委員",
+    footerNotice: "応化生向け・参考情報・転載禁止"
+  },
+
+  home: {
+    lead: "早稲田の院試（内部受験）について、学部1〜3年生がまず知っておきたい基本情報、選択科目ごとの学習情報、受験した先輩へのアンケート結果をまとめる学科内向けの情報共有サイトです。",
+    entries: [
+      { route: "basic", num: "①", icon: "calendar", title: "基本情報", desc: "日程・試験形式・英語など、院試の全体像を知る", button: "基本情報を見る" },
+      { route: "subjects", num: "②", icon: "files", title: "選択科目", desc: "科目ごとの基本情報・過去問・対策法を調べる", button: "科目を選ぶ" },
+      { route: "voices", num: "③", icon: "people", title: "先輩たちの声", desc: "先輩の科目選びや準備の経験を参考にする", button: "先輩たちの声を見る" }
+    ],
+    startHint: "初めての方は、①基本情報から",
+    news: [
+      { date: "2026-10-25", cat: "サイト", text: "レイアウト確認用のβ版プロトタイプを作成しました（本文は仮文です）。" },
+      { date: "2026-10-20", cat: "構成", text: "第1部「基本情報」と第2部「選択科目」・第3部「先輩たちの声」の3部構成です（レイアウト案）。" },
+      { date: "準備中", cat: "アンケート", text: "先輩アンケートの配布経路と締め切りを応用化学委員と相談しています。" }
+    ]
+  },
+
+  basicPages: [
+    {
+      id: "schedule", title: "試験日程", icon: "calendar",
+      summary: "出願から合格発表までの流れと、おおよその時期",
+      keywords: "日程 スケジュール 出願 筆記 口頭 合格発表 いつ 時期",
+      intro: "院試は「出願 → 筆記試験 → 口頭試験 → 合格発表」の順に進みます。このページでは全体の流れと、学年ごとの準備の目安をまとめます。日付はすべて確認中です。",
+      points: ["院試は4年生の夏前後に行われる見込みです（時期は確認中）", "出願の前に、TOEICスコアなど提出物の準備が必要です", "日付は年度ごとに変わるため、必ず募集要項で確認してください"],
+      sections: [
+        { id: "flow", heading: "出願から合格発表までの流れ", type: "timeline",
+          steps: [
+            { label: "出願", when: "時期：確認中", desc: "募集要項に沿って書類を提出" },
+            { label: "筆記試験", when: "時期：確認中", desc: "専門科目を選んで解答" },
+            { label: "口頭試験", when: "時期：確認中", desc: "研究内容や志望理由などの質疑" },
+            { label: "合格発表", when: "時期：確認中", desc: "発表方法は募集要項で確認" }
+          ] },
+        { id: "documents", heading: "出願までに準備するもの", type: "list",
+          items: ["TOEICのスコア（提出期限は確認中）", "出願書類（様式は募集要項で確認）", "志望する研究室についての情報収集（必要な手続きは確認中）"] },
+        { id: "plan", heading: "学年ごとの準備の目安", type: "text",
+          body: ["1〜2年生のうちは、日程と形式を知っておくだけで十分です。", "3年生になったら、TOEICの受験時期と過去問の入手方法を確認しておきましょう。（仮文）"] }
+      ]
+    },
+    {
+      id: "written", title: "筆記試験の形式", icon: "pencil",
+      summary: "科目の選び方と、大問を選んで解くしくみ",
+      keywords: "筆記 科目 大問 選択 無機 有機 物理化学 化学工学 生物",
+      intro: "筆記試験は、いくつかの専門科目から一部を選び、さらに各科目の大問から選んで解く形式と聞いています。ここでは選び方のしくみを図と表で示します。科目数・選択数は構成案時点の聞き取りによる仮表示で、現行制度として確定したものではありません。",
+      points: ["専門科目から一部を選んで解く形式です（科目数・選択数は仮表示）", "各科目の大問から、さらに選んで解きます（仮表示）", "科目の選び方は、過去問を見ながら早めに考えるのがおすすめです"],
+      sections: [
+        { id: "structure", heading: "科目と大問の選び方", type: "diagram" },
+        { id: "subjects-table", heading: "科目ごとの概要", type: "table",
+          columns: ["科目", "大問の数", "解く大問の数", "主な範囲", "備考"],
+          rows: [
+            ["無機化学", "4（仮）", "3（仮）", "確認中", "—"],
+            ["有機化学", "4（仮）", "3（仮）", "確認中", "—"],
+            ["物理化学", "4（仮）", "3（仮）", "確認中", "—"],
+            ["化学工学", "4（仮）", "3（仮）", "確認中", "—"],
+            ["生物", "4（仮）", "3（仮）", "確認中", "—"]
+          ] },
+        { id: "notes", heading: "試験当日の注意", type: "text",
+          body: ["試験時間・持ち物・解答用紙の扱いは確認中です。確定したらこの欄に追記します。（仮文）"] }
+      ]
+    },
+    {
+      id: "english", title: "英語・TOEIC", icon: "globe",
+      summary: "TOEICスコアの扱いと、提出の時期",
+      keywords: "英語 TOEIC トーイック スコア 基準 足切り 提出期限",
+      intro: "英語はTOEICのスコアを提出する形式と聞いています。基準点・合否への使われ方・提出期限はいずれも確認中です。",
+      points: ["TOEICスコアの提出が必要です（提出方法は確認中）", "基準となる点数がある可能性があります（点数は確認中）", "受験から結果が出るまで時間がかかるので、早めの受験がおすすめです"],
+      sections: [
+        { id: "score", heading: "スコアの扱い", type: "facts",
+          facts: [["提出するもの", "TOEICのスコア（種類は確認中）"], ["基準点", "確認中（仮表示）"], ["合否への使われ方", "確認中"]] },
+        { id: "deadline", heading: "提出期限と受験の時期", type: "text",
+          body: ["提出期限は確認中です。結果が届くまでの期間を考えて、期限から逆算して受験日を決めましょう。（仮文）"] },
+        { id: "prep", heading: "対策の進め方", type: "text",
+          body: ["公式問題集などで形式に慣れておくと安心です。具体的な教材は「先輩たちの声」の参考資料も見てください。（仮文）"] }
+      ]
+    },
+    {
+      id: "oral", title: "口頭試験", icon: "chat",
+      summary: "口頭試験の形式と、聞かれることの種類",
+      keywords: "口頭 面接 質疑 研究内容 志望理由",
+      intro: "筆記試験のあとに口頭試験があります。形式・時間は確認中です。聞かれることの種類は、先輩アンケートの集計も参考にしてください。",
+      points: ["筆記試験のあとに行われます（時期は確認中）", "研究内容や志望理由などについて質疑があると聞いています", "質問の内容そのものではなく、種類だけを紹介します"],
+      sections: [
+        { id: "format", heading: "口頭試験の形式", type: "facts",
+          facts: [["形式", "確認中（面接形式と聞いています）"], ["時間", "確認中"], ["使用する言語", "確認中"]] },
+        { id: "topics", heading: "聞かれることの種類", type: "list",
+          items: ["研究内容・卒論の説明", "志望理由", "筆記試験の内容について", "専門知識の質問", "英語での質疑"],
+          link: { label: "先輩アンケートの集計を見る", route: "voices", anchor: "oral" } },
+        { id: "prep", heading: "準備のしかた", type: "text",
+          body: ["自分の研究内容を短く説明する練習をしておくと安心です。（仮文）"] }
+      ]
+    },
+    {
+      id: "kakomon", title: "過去問を使った準備", icon: "files",
+      summary: "過去問の入手方法と、使い方の考え方",
+      keywords: "過去問 入手 使い方 対策 準備",
+      intro: "院試の準備は、過去問を使うことが前提になります。科目別の過去問・大問例は第2部に掲載欄を用意しています。実際の内容は確認後に追加します。",
+      points: ["過去問を使った準備が前提です", "科目別の過去問・大問例は準備中です", "入手方法は確認中です"],
+      sections: [
+        { id: "where", heading: "過去問の入手方法", type: "text",
+          body: ["入手方法は確認中です。確認できたら、手順だけをこの欄に記載します。（仮文）"] },
+        { id: "how", heading: "過去問の使い方", type: "steps",
+          items: ["まず1年分を時間を測らずに解き、問題の形に慣れる", "科目選びの参考にする", "時間を測って通しで解く"] },
+        { id: "not-here", heading: "掲載内容の確認について", type: "list",
+          items: ["過去問・大問例は内容と出典を確認してから追加します", "出題傾向は断定しません", "レジュメ・教科書などの資料本体は掲載しません"] }
+      ]
+    },
+    {
+      id: "kubun", title: "入試区分の違い", icon: "branch",
+      summary: "入試区分ごとの、時期や試験内容の違い",
+      keywords: "入試区分 推薦 一般 区分 違い",
+      intro: "院試にはいくつかの入試区分があり、時期や試験の内容が異なる場合があります。区分の名称と違いは確認中です。",
+      points: ["入試区分によって、時期や試験内容が異なる場合があります", "区分の名称・条件は確認中です", "自分がどの区分で受けるかは募集要項で確認してください"],
+      sections: [
+        { id: "compare", heading: "区分ごとの比較", type: "table",
+          columns: ["項目", "区分A（名称確認中）", "区分B（名称確認中）"],
+          rows: [["対象", "確認中", "確認中"], ["出願の時期", "確認中", "確認中"], ["筆記試験", "確認中", "確認中"], ["口頭試験", "確認中", "確認中"]] },
+        { id: "choose", heading: "どの区分で受けるか", type: "text",
+          body: ["条件や時期を比べて決めます。分からない場合は、問い合わせフォームから質問してください。（仮文）"] }
+      ]
+    }
+  ],
+
+  basicMeta: { year: "2027年度入試（予定・確認中）", checked: "未確認（仮表示）", source: "募集要項（公式リンク準備中）", officialUrl: null },
+  basicHistory: [{ date: "2026-10-25", text: "レイアウト確認用の仮ページを作成" }],
+
+  voiceSections: [
+    { id: "prep", label: "準備の進め方" },
+    { id: "written", label: "筆記試験" },
+    { id: "oral", label: "口頭試験" },
+    { id: "messages", label: "後輩へのメッセージ" }
+  ],
+
+  faq: [
+    { id: "faq-usage", cat: "サイトの使い方", icon: "home", items: [
+      { q: "どこから読めばいいですか？", a: "まず第1部「基本情報」、次に第2部「選択科目」、最後に第3部「先輩たちの声」の順で読むのがおすすめです。" },
+      { q: "スマートフォンでも見られますか？", a: "見られます。メニューは右上の「メニュー」ボタンから開けます。" } ] },
+    { id: "faq-basic", cat: "基本情報について", icon: "calendar", items: [
+      { q: "日程や点数が「確認中」になっているのはなぜですか？", a: "公式の募集要項で確認できた内容だけを確定として載せる方針のためです。確認が済むまでは「確認中」と表示します。" },
+      { q: "公式の募集要項はどこで見られますか？", a: "公式リンクは準備中です。掲載後は各ページの出典欄からたどれるようにします。" } ] },
+    { id: "faq-survey", cat: "アンケート結果の見方", icon: "people", items: [
+      { q: "グラフの一部が表示されていないのはなぜですか？", a: "回答が3人未満の集計は、個人が推測されないように表示していません。ほかの数値から逆算できる場合も、あわせて非表示にします。" },
+      { q: "人数が多い科目を選べば有利ですか？", a: "そうとは限りません。結果はGPAやこれまでの学習の蓄積にも左右されます。科目選びの参考の一つとして見てください。" },
+      { q: "過去問の内容は載っていますか？", a: "載せていません。年度ごとの大問番号の選び方は扱いますが、問題文や出題内容は掲載しません。" } ] },
+    { id: "faq-scope", cat: "公開範囲・情報の取り扱い", icon: "lock", items: [
+      { q: "誰が見られるサイトですか？", a: "応用化学科の学生向けを想定しています。本番では学校アカウントによる閲覧制限を別に設定する予定です。このデモには閲覧制限は入っていません。" },
+      { q: "アンケートで誰が答えたか分かりますか？", a: "回答は匿名で集計し、メールアドレスは記録しない方針です。" },
+      { q: "資料を転載してもいいですか？", a: "転載はご遠慮ください。応化生向けの参考情報として作成しています。" } ] }
+  ],
+
+  /* ---- アンケート（すべて架空のデモデータ） ----
+     書式: 年度|系|勉強開始時期|選んだ科目と大問（勉強時間が多い順）|得点源|口頭試験で聞かれたこと|ひとこと番号
+     科目: i=無機 o=有機 p=物理化学 c=化学工学 b=生物 / 例 "o134" = 有機で大問1・3・4を解いた */
+  survey: {
+    minGroup: 3,
+    years: [{ v: "2026", label: "2026年" }, { v: "2025", label: "2025年" }, { v: "2024以前", label: "2024年以前" }],
+    kei: ["有機系", "無機系", "物理化学系", "化学工学系", "生物系"],
+    starts: ["3年の夏以前", "3年の秋〜冬", "4年の春", "4年の夏"],
+    subjects: [
+      { key: "i", id: "inorg", label: "無機化学" }, { key: "o", id: "org", label: "有機化学" },
+      { key: "p", id: "phys", label: "物理化学" }, { key: "c", id: "chemeng", label: "化学工学" }, { key: "b", id: "bio", label: "生物" }
+    ],
+    oral: ["研究内容・卒論の説明", "志望理由", "筆記試験の内容について", "専門知識の質問", "英語での質疑", "その他"],
+    materials: {
+      inorg: ["授業のレジュメ（無機化学）", "教科書：無機化学の基礎（仮名）", "演習書：無機化学演習（仮名）"],
+      org: ["授業のレジュメ（有機化学）", "教科書：有機化学 上・下（仮名）", "演習書：有機反応の演習（仮名）"],
+      phys: ["授業のレジュメ（物理化学）", "教科書：物理化学の考え方（仮名）", "演習書：物理化学演習（仮名）"],
+      chemeng: ["授業のレジュメ（化学工学）", "教科書：化学工学概論（仮名）"],
+      bio: ["授業のレジュメ（生物）", "教科書：生化学の基礎（仮名）"]
+    },
+    comments: [
+      "日程を早めに確認して、逆算して計画を立てるのがおすすめです。",
+      "過去問を1年分だけでも早めに見ておくと、科目選びの迷いが減りました。",
+      "得意な科目を1つ決めておくと、気持ちが楽になります。",
+      "分からないところは同期や先輩に聞くのが一番早かったです。",
+      "口頭試験は、研究内容を短く説明する練習をしておくと安心です。",
+      "TOEICは思ったより準備に時間がかかるので、早めの受験をおすすめします。",
+      "授業のレジュメを見直すところから始めました。",
+      "毎日少しずつでも続けることが大事だと感じました。",
+      "苦手な科目は解く大問を絞って準備しました。合う方法は人によって違うと思います。",
+      "研究室の活動と並行するので、夏前に基礎を固めておくとよかったです。",
+      "体調管理も準備のうちです。",
+      "周りと比べすぎず、自分のペースで進めてください。"
+    ],
+    raw: [
+      "2026|0|1|o134 p124 i234|o|013|0", "2026|0|2|o124 i134 p234|o|0134|-", "2026|1|1|i123 p124 o134|i|013|1",
+      "2026|2|0|p124 i234 o123|p|0123|2", "2026|3|2|c134 p124 i123|c|013|-", "2026|3|1|c124 p134 o124|p|0124|3",
+      "2026|0|3|o134 i124 p123|o|01|-", "2026|2|1|p123 c134 i234|p|0135|4", "2026|1|0|i124 o134 p124|i|013|-",
+      "2026|0|1|o123 p134 i124|o|0123|5", "2026|4|2|b123 o134 p124|o|014|-", "2026|2|2|p134 i124 c123|i|013|6",
+      "2026|3|3|c123 p124 i134|c|01|-",
+      "2025|0|1|o124 p134 i123|o|013|7", "2025|1|0|i134 p123 o124|p|0123|-", "2025|4|2|p124 b134 i234|p|014|8",
+      "2025|3|1|c124 p123 i134|c|013|-", "2025|0|2|o134 i124 c123|o|0135|9", "2025|1|1|i123 o124 p134|i|01|-",
+      "2025|4|3|b134 o123 i124|o|013|-", "2025|2|1|p134 i123 o124|p|0123|10", "2025|0|2|o123 p124 c134|o|014|-",
+      "2024以前|1|0|i124 p134 o123|i|013|11", "2024以前|3|1|c134 p123 o124|c|0123|-"
+    ]
+  }
+};
+</script>
+
+<!-- =====================================================================
+  2) アプリ本体（共通部品・ページ）
+====================================================================== -->
+<script>
+(function(){
+const C = window.SITE_CONTENT;
+const { useState, useEffect, useRef, useMemo, useCallback, createContext, useContext } = React;
+const html = htm.bind(React.createElement);
+
+/* ---------- Icons ---------- */
+const ICONS = {
+  calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  pencil:'<path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/>',
+  globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/>',
+  chat:'<path d="M4 5h16v11H10l-6 4V5z"/><path d="M8 10h8"/>',
+  files:'<path d="M9 3h7l4 4v11H9z"/><path d="M16 3v4h4"/><path d="M5 7v14h11"/>',
+  branch:'<circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="9" r="2"/><path d="M6 7v10M18 11c0 4-6 3-11.5 6.5"/>',
+  people:'<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6M15.5 14.5c3 0 5.5 2 5.5 5.5"/>',
+  question:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.6 2.2c-.7.4-1.1 1-1.1 1.8v.5"/><path d="M12 17h.01"/>',
+  info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/>',
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  left:'<path d="M15 6l-6 6 6 6"/>', right:'<path d="M9 6l6 6-6 6"/>',
+  chevron:'<path d="M6 9l6 6 6-6"/>',
+  menu:'<path d="M4 6h16M4 12h16M4 18h16"/>', close:'<path d="M6 6l12 12M18 6L6 18"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
+  home:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',
+  flag:'<path d="M5 21V4h11l-2 4 2 4H5"/>',
+  link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+  lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+  eyeoff:'<path d="M3 3l18 18M10.6 6.1A9.8 9.8 0 0 1 12 6c5 0 9 6 9 6a16 16 0 0 1-3 3.4M6.6 6.6C4.3 8.1 3 12 3 12s4 6 9 6a8.6 8.6 0 0 0 3.4-.7"/>',
+  mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>'
+};
+function Icon({ name, label }){
+  return html`<svg className="icon" viewBox="0 0 24 24" aria-hidden=${label ? undefined : 'true'} role=${label ? 'img' : undefined} aria-label=${label} dangerouslySetInnerHTML=${{ __html: ICONS[name] || '' }}></svg>`;
+}
+
+/* ---------- Routing ---------- */
+const PAGES = C.basicPages;
+const SUBJECTS = [
+{id:'inorganic',name:'無機化学',short:'無機',code:'INORGANIC',desc:'原子・元素・化合物の性質を学ぶ科目'},
+{id:'organic',name:'有機化学',short:'有機',code:'ORGANIC',desc:'有機化合物の構造と反応を学ぶ科目'},
+{id:'physical',name:'物理化学',short:'物理化学',code:'PHYSICAL',desc:'化学現象を理論と計算から捉える科目'},
+{id:'engineering',name:'化学工学',short:'化学工学',code:'ENGINEERING',desc:'化学プロセスと操作を扱う科目'},
+{id:'biology',name:'生物',short:'生物',code:'BIOLOGY',desc:'生命現象を化学の視点から学ぶ科目'}
+];
+const SUBJECT_SECTIONS = [['overview','基本情報'],['past-exams','過去問・大問例'],['strategy','対策法'],['resources','参考資料']];
+const STATIC_ROUTES = ['home', 'basic', 'subjects', 'voices', 'faq', 'about'];
+function isRoute(r){ return STATIC_ROUTES.includes(r) || SUBJECTS.some(p => 'subject-' + p.id === r) || (r.startsWith('basic-') && PAGES.some(p => 'basic-' + p.id === r)); }
+function readHash(){ try { const h = decodeURIComponent((location.hash || '').slice(1)); return isRoute(h) ? h : 'home'; } catch(e){ return 'home'; } }
+const reduceMotion = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch(e){ return false; } };
+function scrollToAnchor(id){
+  if (!id){ window.scrollTo(0, 0); return; }
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'start' });
+}
+const NavCtx = createContext(null);
+const useNav = () => useContext(NavCtx);
+
+function NavLink({ route, anchor, className, children, current, onClick, ...rest }){
+  const { navigate } = useNav();
+  return html`<a href=${'#' + route} className=${className} aria-current=${current ? 'page' : undefined}
+    onClick=${e => { e.preventDefault(); if (onClick) onClick(); navigate(route, anchor); }} ...${rest}>${children}</a>`;
+}
+
+function useMedia(q){
+  const get = () => { try { return matchMedia(q).matches; } catch(e){ return false; } };
+  const [m, setM] = useState(get);
+  useEffect(() => {
+    let mq; try { mq = matchMedia(q); } catch(e){ return; }
+    const on = () => setM(mq.matches);
+    mq.addEventListener ? mq.addEventListener('change', on) : mq.addListener(on);
+    on();
+    return () => { mq.removeEventListener ? mq.removeEventListener('change', on) : mq.removeListener(on); };
+  }, [q]);
+  return m;
+}
+
+/* ---------- Navigation model ---------- */
+const NAV = [
+  { route: 'home', label: 'ホーム', icon: 'home' },
+  { route: 'basic', label: '基本情報', icon: 'calendar', children: [{ route: 'basic', label: '基本情報の一覧' }].concat(PAGES.map(p => ({ route: 'basic-' + p.id, label: p.title, icon: p.icon }))) },
+  { route: 'subjects', label: '選択科目', icon: 'files', children: [{route:'subjects',label:'選択科目の一覧'}].concat(SUBJECTS.map(p => ({route:'subject-'+p.id,label:p.name}))) },
+  { route: 'voices', label: '先輩たちの声', icon: 'people' }
+];
+/* ヘッダーには出さず、ハンバーガーメニューとフッターにまとめる項目 */
+const NAV_SITE = [
+  { route: 'faq', label: 'よくある質問', icon: 'question' },
+  { route: 'about', label: '運営について', icon: 'info' },
+  { route: 'about', anchor: 'contact', label: '問い合わせ・誤り報告', icon: 'mail' }
+];
+const inSection = (route, top) => route === top || (top === 'basic' && route.startsWith('basic-')) || (top === 'subjects' && route.startsWith('subject-'));
+
+/* ---------- Search index (ローカルのデモページ見出し・カテゴリ) ---------- */
+const SEARCH_INDEX = [].concat(
+  [{ title: 'ホーム', cat: 'サイト', route: 'home', kw: 'トップ はじめに' },
+   { title: '基本情報の一覧', cat: '第1部 基本情報', route: 'basic', kw: '院試 全体像' }],
+  ...PAGES.map(p => [{ title: p.title, cat: '第1部 基本情報', route: 'basic-' + p.id, kw: p.summary + ' ' + p.keywords }]
+    .concat(p.sections.map(s => ({ title: s.heading, cat: '基本情報 › ' + p.title, route: 'basic-' + p.id, anchor: s.id, kw: p.keywords })))),
+  [{title:'選択科目の一覧',cat:'第2部 選択科目',route:'subjects',kw:'無機 有機 物理化学 化学工学 生物'}],
+  ...SUBJECTS.map(p => [{title:p.name,cat:'第2部 選択科目',route:'subject-'+p.id,kw:p.short+' '+p.desc}].concat(SUBJECT_SECTIONS.map(([id,label]) => ({title:p.name+'：'+label,cat:'選択科目 › '+p.name,route:'subject-'+p.id,anchor:id,kw:p.short+' '+label})))),
+  [{ title: '先輩たちの声', cat: '第3部 先輩たちの声', route: 'voices', kw: 'アンケート 集計 体験 先輩' },
+   { title: '勉強を始めた時期', cat: '先輩たちの声 › 準備の進め方', route: 'voices', anchor: 'prep', kw: '開始 いつから' },
+   { title: '選んだ科目と大問', cat: '先輩たちの声 › 筆記試験', route: 'voices', anchor: 'written', kw: '科目 大問 選択' },
+   { title: '勉強時間の順位と得点源', cat: '先輩たちの声 › 筆記試験', route: 'voices', anchor: 'time', kw: '勉強時間 得点源' },
+   { title: '科目別の参考資料', cat: '先輩たちの声 › 筆記試験', route: 'voices', anchor: 'materials', kw: '教科書 レジュメ 資料 参考書' },
+   { title: '口頭試験で聞かれたことの種類', cat: '先輩たちの声 › 口頭試験', route: 'voices', anchor: 'oral', kw: '口頭 面接' },
+   { title: '後輩へのひとこと', cat: '先輩たちの声 › 後輩へのメッセージ', route: 'voices', anchor: 'messages', kw: 'コメント メッセージ' },
+   { title: 'よくある質問', cat: 'サイトについて', route: 'faq', kw: 'FAQ 質問' }],
+  ...C.faq.map(c => [{ title: c.cat, cat: 'よくある質問', route: 'faq', anchor: c.id, kw: c.items.map(i => i.q).join(' ') }]),
+  [{ title: '運営について', cat: 'サイトについて', route: 'about', kw: '運営元 発起人 応用化学委員 非公式 非営利' },
+   { title: '情報の確認・更新方針', cat: '運営について', route: 'about', anchor: 'policy', kw: '更新 確認 出典' },
+   { title: 'お知らせ・更新履歴', cat: '運営について', route: 'about', anchor: 'news', kw: 'お知らせ 更新 履歴 ニュース' },
+   { title: 'プライバシー方針（仮）', cat: '運営について', route: 'about', anchor: 'privacy', kw: '個人情報 プライバシー' },
+   { title: '質問・誤り報告フォーム', cat: '運営について', route: 'about', anchor: 'contact', kw: '問い合わせ 誤り 報告 フォーム 質問' }]
+);
+const norm = s => (s || '').toLowerCase().normalize('NFKC');
+function runSearch(q){
+  const terms = norm(q).split(/\s+/).filter(Boolean);
+  if (!terms.length) return [];
+  return SEARCH_INDEX.filter(e => { const hay = norm(e.title + ' ' + e.cat + ' ' + (e.kw || '')); return terms.every(t => hay.includes(t)); }).slice(0, 10);
+}
+function highlight(text, q){
+  const t = norm(q).split(/\s+/).filter(Boolean)[0];
+  if (!t) return text;
+  const i = norm(text).indexOf(t);
+  if (i < 0) return text;
+  return html`${text.slice(0, i)}<mark>${text.slice(i, i + t.length)}</mark>${text.slice(i + t.length)}`;
+}
+
+function Search({ id, autoFocus, onNavigate }){
+  const { navigate } = useNav();
+  const [q, setQ] = useState('');
+  const [open, setOpen] = useState(false);
+  const wrap = useRef(null), input = useRef(null);
+  const results = useMemo(() => runSearch(q), [q]);
+  useEffect(() => { if (autoFocus && input.current) input.current.focus(); }, [autoFocus]);
+  useEffect(() => {
+    const on = e => { if (wrap.current && !wrap.current.contains(e.target)) setOpen(false); };
+    document.addEventListener('mousedown', on);
+    return () => document.removeEventListener('mousedown', on);
+  }, []);
+  const go = r => { setOpen(false); setQ(''); if (onNavigate) onNavigate(); navigate(r.route, r.anchor); };
+  const clear = () => { setQ(''); input.current && input.current.focus(); };
+  const show = open && q.trim();
+  return html`<div className="search" role="search" ref=${wrap}>
+    <label className="sr-only" htmlFor=${id}>サイト内を検索</label>
+    <div className="search-field">
+      <${Icon} name="search"/>
+      <input id=${id} ref=${input} type="text" autoComplete="off" placeholder="ページ・項目を検索" value=${q}
+        aria-controls=${id + '-results'} aria-expanded=${show ? 'true' : 'false'}
+        onChange=${e => { setQ(e.target.value); setOpen(true); }} onFocus=${() => setOpen(true)}
+        onKeyDown=${e => { if (e.key === 'Escape'){ if (q) setQ(''); else setOpen(false); } if (e.key === 'Enter' && results[0]) go(results[0]); }}/>
+      ${q && html`<button type="button" className="search-clear" onClick=${clear} aria-label="検索語をクリア"><${Icon} name="close"/></button>`}
+    </div>
+    ${show && html`<div className="search-panel" id=${id + '-results'} aria-live="polite">
+      ${results.length ? html`
+        <p className="search-count">「${q}」の検索結果：${results.length}件</p>
+        <ul className="search-results">${results.map((r, i) => html`<li key=${i}><button type="button" onClick=${() => go(r)}>
+          <span className="r-title">${highlight(r.title, q)}</span><span className="r-cat">${r.cat}</span></button></li>`)}</ul>`
+      : html`<div className="search-empty">
+          <p>「${q}」に一致するページは見つかりませんでした。</p>
+          <p className="note">ほかの言葉で試してください。例：</p>
+          <div className="chips">${['日程', 'TOEIC', '口頭', '過去問', '大問'].map(w => html`<button type="button" key=${w} className="chip" onClick=${() => { setQ(w); input.current && input.current.focus(); }}>${w}</button>`)}</div>
+        </div>`}
+    </div>`}
+  </div>`;
+}
+
+/* ---------- Accordion (shared) ---------- */
+function Accordion({ id, title, children, defaultOpen = false, open, onToggle, variant, level = 3, meta, extraClass = '', showStateText = true }){
+  const [inner, setInner] = useState(defaultOpen);
+  const isOpen = open !== undefined ? open : inner;
+  const toggle = () => { if (onToggle) onToggle(!isOpen); else setInner(!isOpen); };
+  const H = 'h' + level;
+  return html`<div className=${'acc' + (variant ? ' acc--' + variant : '') + (isOpen ? ' is-open' : '') + (extraClass ? ' ' + extraClass : '')}>
+    <${H} className="acc-h">
+      <button type="button" className="acc-btn" id=${id + '-btn'} aria-expanded=${isOpen ? 'true' : 'false'} aria-controls=${id + '-panel'} onClick=${toggle}>
+        <span className="acc-title">${title}</span>
+        ${meta && html`<span className="acc-meta">${meta}</span>`}
+        <span className="acc-state" aria-hidden="true">${showStateText && (isOpen ? '閉じる' : '開く')}<${Icon} name="chevron"/></span>
+      </button>
+    <//>
+    <div id=${id + '-panel'} role="region" aria-labelledby=${id + '-btn'} className="acc-panel" hidden=${!isOpen}>${children}</div>
+  </div>`;
+}
+
+/* ---------- Small shared parts ---------- */
+const DemoTag = ({ text }) => html`<span className="demo-tag">${text || '架空データ／レイアウト確認用'}</span>`;
+function Breadcrumbs({ items }){
+  return html`<nav className="crumbs" aria-label="現在地"><ol>${items.map((it, i) => html`<li key=${i}>${
+    i < items.length - 1 ? html`<${NavLink} route=${it.route}>${it.label}<//>` : html`<span aria-current="page">${it.label}</span>`}</li>`)}</ol></nav>`;
+}
+function CategoryCard({ page, index }){
+  return html`<li><${NavLink} route=${'basic-' + page.id} className="card-link">
+    <span className="card-ico"><${Icon} name=${page.icon}/></span>
+    <span className="card-body"><span className="card-num">基本情報 ${index + 1}/${PAGES.length}</span><span className="card-title">${page.title}</span><span className="card-desc">${page.summary}</span></span>
+    <span className="card-arrow"><${Icon} name="arrow"/></span>
+  <//></li>`;
+}
+function PageHead({ part, title, lead, tags }){
+  return html`<header className="page-head">
+    <p className="eyebrow">${part}${tags}</p>
+    <h1 tabIndex="-1">${title}</h1>
+    ${lead && html`<p className="lead">${lead}</p>`}
+  </header>`;
+}
+function BackLink({ route, label }){
+  return html`<${NavLink} route=${route} className="back-link"><${Icon} name="left"/>${label}<//>`;
+}
+function MiniToc({ items }){
+  return html`<nav className="mini-toc" aria-label="このページの目次"><span className="mini-toc-lbl">目次</span>${items.map(([id, label]) => html`<a key=${id} href=${'#' + id} onClick=${e => { e.preventDefault(); scrollToAnchor(id); }}>${label}</a>`)}</nav>`;
+}
+function RelatedLinks({ links }){
+  return html`<aside className="related-links" aria-labelledby="related"><h2 id="related">関連する情報</h2>
+    <ul>${links.map((l, i) => html`<li key=${i}><${NavLink} route=${l.route} anchor=${l.anchor}>${l.label}<//></li>`)}</ul></aside>`;
+}
+const Part1 = () => html`<span className="part-tag"><${Icon} name="calendar"/>第1部 基本情報</span>`;
+const Part2 = () => html`<span className="part-tag p2"><${Icon} name="people"/>第3部 先輩たちの声</span>`;
+
+/* ---------- Header ---------- */
+function Header({ menuOpen, onMenu, menuBtnRef }){
+  const { route } = useNav();
+  const compact = useMedia('(max-width: 1023px)');
+  const [searchOpen, setSearchOpen] = useState(false);
+  useEffect(() => { if (!compact) setSearchOpen(false); }, [compact]);
+  return html`<header className="site-header">
+    <div className="demo-strip"><div className="container demo-strip-in">
+      <span><strong>${C.site.demoNote}</strong></span><span>${C.site.unofficial}</span>
+    </div></div>
+    <div className="container header-in">
+      <${NavLink} route="home" className="brand" aria-label=${C.site.name + '（ホームへ）'}>
+        <span className="brand-name">${C.site.name}</span>
+        <span className="badges">${C.site.badges.map(b => html`<span key=${b} className=${'badge' + (b === 'β版' ? ' badge-beta' : '')}>${b}</span>`)}</span>
+      <//>
+      ${!compact && html`<nav className="gnav" aria-label="主要ナビゲーション">${NAV.map(item => {
+        const cur = inSection(route, item.route);
+        return html`<div key=${item.route} className="gnav-item"><${NavLink} route=${item.route} className=${'gnav-link' + (cur ? ' is-current' : '')} current=${cur}>${item.label}<//></div>`; })}</nav>
+        <${Search} id="search-desktop"/>`}
+      ${compact && html`<div className="header-actions">
+        <button type="button" className="icon-btn" aria-expanded=${searchOpen ? 'true' : 'false'} aria-controls="mobile-search" onClick=${() => setSearchOpen(!searchOpen)}>
+          <${Icon} name=${searchOpen ? 'close' : 'search'}/><span>検索</span></button>
+        <button type="button" ref=${menuBtnRef} className="icon-btn" aria-expanded=${menuOpen ? 'true' : 'false'} aria-controls="drawer" aria-haspopup="dialog" onClick=${onMenu}>
+          <${Icon} name="menu"/><span>メニュー</span></button>
+      </div>`}
+    </div>
+    ${compact && searchOpen && html`<div className="container mobile-search" id="mobile-search"><${Search} id="search-mobile" autoFocus=${true} onNavigate=${() => setSearchOpen(false)}/></div>`}
+  </header>`;
+}
+
+/* ---------- Drawer (hamburger menu) ---------- */
+function Drawer({ onClose }){
+  const { route } = useNav();
+  const panel = useRef(null), closeBtn = useRef(null);
+  const [openSec, setOpenSec] = useState(() => ({ basic: inSection(route, 'basic'), subjects: inSection(route, 'subjects') }));
+  useEffect(() => {
+    document.body.classList.add('no-scroll');
+    const t = setTimeout(() => closeBtn.current && closeBtn.current.focus(), 0);
+    const onEsc = e => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onEsc);
+    return () => { clearTimeout(t); document.removeEventListener('keydown', onEsc); document.body.classList.remove('no-scroll'); };
+  }, []);
+  const onKey = e => {
+    if (e.key === 'Escape'){ e.stopPropagation(); onClose(); return; }
+    if (e.key !== 'Tab') return;
+    const f = panel.current.querySelectorAll('button:not([disabled]), a[href], input, [tabindex]:not([tabindex="-1"])');
+    const vis = Array.from(f).filter(el => el.offsetParent !== null);
+    if (!vis.length) return;
+    const first = vis[0], last = vis[vis.length - 1];
+    if (e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+  };
+  return html`<div onKeyDown=${onKey}>
+    <div className="drawer-backdrop" onClick=${onClose} aria-hidden="true"></div>
+    <div className="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title" ref=${panel}>
+      <div className="drawer-head">
+        <h2 id="drawer-title">メニュー</h2>
+        <button type="button" className="icon-btn" ref=${closeBtn} onClick=${onClose}><${Icon} name="close"/><span>閉じる</span></button>
+      </div>
+      <nav className="drawer-body" aria-label="サイトメニュー">
+        <ul className="dnav">${NAV.map(item => {
+          if (!item.children){
+            return html`<li key=${item.route}><${NavLink} route=${item.route} className="dnav-link" current=${route === item.route}><${Icon} name=${item.icon}/>${item.label}<//></li>`;
+          }
+          const cur = inSection(route, item.route);
+          return html`<li key=${item.route}><${Accordion} id=${'dn-' + item.route} variant="nav" level=${3} extraClass=${cur ? 'is-current' : ''} showStateText=${false}
+              open=${!!openSec[item.route]} onToggle=${v => setOpenSec(s => ({ ...s, [item.route]: v }))}
+              title=${html`<${Icon} name=${item.icon}/>${item.label}${cur ? html`<span className="sr-only">（現在のカテゴリ）</span>` : null}`}>
+            <ul className="dnav-sub">${item.children.map((c, i) => {
+              const curChild = !c.anchor && c.route === route;
+              return html`<li key=${i}><${NavLink} route=${c.route} anchor=${c.anchor} className="dnav-link" current=${curChild}>${c.label}<//></li>`; })}</ul>
+          <//></li>`; })}</ul>
+        <h3 className="dnav-group">サイトについて</h3>
+        <ul className="dnav dnav-small">${NAV_SITE.map((item, i) => html`<li key=${i}><${NavLink} route=${item.route} anchor=${item.anchor} className="dnav-link" current=${!item.anchor && route === item.route}><${Icon} name=${item.icon}/>${item.label}<//></li>`)}</ul>
+        <p className="drawer-note">${C.site.demoNote}<br/>${C.site.unofficial}</p>
+      </nav>
+    </div>
+  </div>`;
+}
+
+/* ---------- Footer (sitemap) ---------- */
+function Footer(){
+  const { route } = useNav();
+  const cols = [
+    { id: 'f-basic', title: '基本情報', icon: 'calendar', links: PAGES.map(p => ({ route: 'basic-' + p.id, label: p.title })) },
+    {id:'f-subjects',title:'選択科目',icon:'files',links:SUBJECTS.map(p=>({route:'subject-'+p.id,label:p.name}))},
+    { id: 'f-voices', title: '先輩たちの声', icon: 'people', links: [
+      { route: 'voices', anchor: 'prep', label: '準備の進め方' }, { route: 'voices', anchor: 'written', label: '筆記試験' },
+      { route: 'voices', anchor: 'oral', label: '口頭試験' }, { route: 'voices', anchor: 'messages', label: '後輩へのメッセージ' }] },
+    { id: 'f-about', title: 'サイトについて', icon: 'info', links: [
+      { route: 'faq', label: 'よくある質問' }, { route: 'about', label: '運営について' },
+      { route: 'about', anchor: 'privacy', label: 'プライバシー方針（仮）' }, { route: 'about', anchor: 'contact', label: '質問・誤り報告' }] }
+  ];
+  const list = links => html`<ul className="flinks">${links.map((l, i) => html`<li key=${i}><${NavLink} route=${l.route} anchor=${l.anchor} current=${!l.anchor && l.route === route}>${l.label}<//></li>`)}</ul>`;
+  return html`<footer className="site-footer">
+    <div className="container footer-in">
+      <nav aria-label="フッターメニュー" className="fmain">
+        <div className="fcol"><h2>メインメニュー</h2>${list(NAV)}</div>
+        <div className="fcol"><h2>サイトについて</h2>${list(NAV_SITE.concat([{ route: 'about', anchor: 'privacy', label: 'プライバシー方針（仮）' }]))}</div>
+      </nav>
+      <nav aria-label="サイトマップ" className="acc-group">
+        <${Accordion} id="f-sitemap" level=${2} extraClass="facc" title=${html`<${Icon} name="menu"/>サイトマップ（すべてのページ）`}>
+          <div className="fcols">${cols.slice(0, 3).map(c => html`<div key=${c.id} className="fcol"><h3><${Icon} name=${c.icon}/>${c.title}</h3>${list(c.links)}</div>`)}</div>
+        <//>
+      </nav>
+      <div className="fbottom">
+        <p><strong>運営元：${C.site.operator}</strong></p>
+        <p>${C.site.unofficial}（大学の公式ロゴは使用していません）</p>
+        <p>${C.site.footerNotice}</p>
+        <p>${C.site.demoNote}</p>
+      </div>
+    </div>
+  </footer>`;
+}
+
+/* =====================================================================
+   Pages
+===================================================================== */
+function Home(){
+  const H = C.home;
+  return html`<div className="container home">
+    <section className="home-hero" aria-labelledby="home-title">
+      <h1 id="home-title" tabIndex="-1">${C.site.name}<span className="home-beta">β版</span></h1>
+      <p className="lead">${H.lead}</p>
+    </section>
+    <nav className="home-entries" aria-labelledby="home-start">
+      <p className="start-hint" id="home-start"><${Icon} name="info"/>${H.startHint}</p>
+      <ol className="entries">${H.entries.map((e, i) => html`<li key=${e.route}>
+        <${NavLink} route=${e.route} className=${'entry' + (i === 0 ? ' is-first' : '')}>
+          <span className="entry-top"><span className="entry-num" aria-hidden="true">${e.num}</span><span className="entry-ico"><${Icon} name=${e.icon}/></span></span>
+          <h2>${e.title}</h2>
+          <p>${e.desc}</p>
+          <span className="entry-btn">${e.button}<${Icon} name="arrow"/></span>
+        <//></li>`)}</ol>
+    </nav>
+    <p className="home-note">${C.site.unofficial}。「先輩たちの声」の数値はレイアウト確認用の架空データです。</p>
+  </div>`;
+}
+
+const SubjectPart = () => html`<span className="part-tag p2"><${Icon} name="files"/>第2部 選択科目</span>`;
+function SubjectCards(){return html`<ul className="cards">${SUBJECTS.map((p,i)=>html`<li key=${p.id}><${NavLink} route=${'subject-'+p.id} className="card-link">
+  <span className="card-ico"><${Icon} name="files"/></span>
+  <span className="card-body"><span className="card-num">選択科目 ${i+1}/${SUBJECTS.length}</span><span className="card-title">${p.name}</span><span className="card-desc">${p.desc}</span></span>
+  <span className="card-arrow"><${Icon} name="arrow"/></span><//></li>`)}</ul>`;}
+function SubjectList(){return html`<div className="container page"><${Breadcrumbs} items=${[{label:'ホーム',route:'home'},{label:'選択科目'}]}/><${PageHead} part=${html`<${SubjectPart}/>`} title="選択科目" lead="5つの科目から、調べたい科目を選んでください。各科目の基本情報・過去問の大問例・対策法へ進めます。"/><${SubjectCards}/><p className="note" style=${{marginTop:'20px'}}>掲載内容はレイアウト確認用です。試験範囲・教材・過去問は確認後に追加します。</p></div>`;}
+function SubjectDetail({subject:p}){
+ const compact=useMedia('(max-width:1023px)');
+ const next=SUBJECTS[(SUBJECTS.indexOf(p)+1)%SUBJECTS.length];
+ return html`<div className="container page"><${Breadcrumbs} items=${[{label:'ホーム',route:'home'},{label:'選択科目',route:'subjects'},{label:p.name}]}/><${BackLink} route="subjects" label="科目一覧に戻る"/>
+ <div className="detail-grid"><article className="detail-main"><${PageHead} part=${html`<${SubjectPart}/>`} tags=${html`<span className="tag">内容準備中</span>`} title=${p.name} lead=${p.desc+'。基本情報から過去問・大問例、対策法までをこのページにまとめます。'}/>
+ <${MiniToc} items=${SUBJECT_SECTIONS}/>
+ <section className="doc-sec" id="overview"><h2>${p.name}の基本情報</h2><dl className="facts-dl"><dt>科目の概要</dt><dd>${p.desc}（仮の説明）</dd><dt>出題範囲</dt><dd>確認中</dd><dt>前提となる知識</dt><dd>執筆予定</dd><dt>試験形式・配点</dt><dd>公式資料を確認後に掲載</dd></dl></section>
+ <section className="doc-sec" id="past-exams"><h2>過去問・大問例</h2><p className="note" style=${{marginBottom:'14px'}}>過去にあった大問を年度別に紹介する欄です。実際の問題や出題内容は未登録です。</p>
+ ${['年度別の過去問','過去にあった大問の例'].map((label,i)=>html`<${Accordion} key=${i} id=${'past-'+p.id+'-'+i} title=${label} defaultOpen=${i===0} variant="box"><div className="subject-placeholder"><span className="tag">掲載準備中</span><h3>${label}の掲載スペース</h3><p>対象年度・大問番号・テーマ・出典・解説への入口をここに配置します。</p><p className="note">実際の過去問は未提供です。内容を確認してから追加します。</p><button className="btn btn-sub btn-sm" disabled>過去問を見る（準備中）</button></div><//>`)}</section>
+ <section className="doc-sec" id="strategy"><h2>対策法</h2><ol className="numbered"><li><strong>基礎を確認する</strong><p className="note">この科目で先に理解しておきたい項目を掲載予定。</p></li><li><strong>例題・過去問に取り組む</strong><p className="note">演習の進め方と解き方のポイントを掲載予定。</p></li><li><strong>つまずきを復習する</strong><p className="note">よくある誤りと見直し方を掲載予定。</p></li></ol></section>
+ <section className="doc-sec" id="resources"><h2>参考資料</h2><div className="subject-placeholder"><p>教科書・資料名と用途を追加予定。資料本体は掲載しません。</p></div></section>
+ <nav className="pager" aria-label="前後のページ"><${NavLink} route="subjects"><span className="dir"><${Icon} name="left"/>科目一覧に戻る</span><b>選択科目</b><//><${NavLink} route=${'subject-'+next.id} className="next"><span className="dir">次の科目<${Icon} name="right"/></span><b>${next.name}</b><//></nav>
+ <${RelatedLinks} links=${[{route:'voices',anchor:'written',label:'先輩たちの声：科目選びと勉強時間の配分（架空データ）'},{route:'basic-written',label:'基本情報：筆記試験の形式'}]}/>
+ </article>${!compact && html`<aside className="detail-aside" aria-label="補助ナビゲーション"><div className="aside-sticky"><nav className="aside-block" aria-label="ほかの選択科目"><h2>選択科目</h2><ul className="side-list">${SUBJECTS.map(q=>html`<li key=${q.id}><${NavLink} route=${'subject-'+q.id} current=${q.id===p.id}><${Icon} name="files"/>${q.name}<//></li>`)}</ul></nav></div></aside>`}</div></div>`;
+}
+
+function BasicList(){
+  return html`<div className="container page">
+    <${Breadcrumbs} items=${[{ label: 'ホーム', route: 'home' }, { label: '基本情報' }]}/>
+    <${PageHead} part=${html`<${Part1}/>`} title="基本情報" lead="院試の日程・形式など、受験する人全員が知っておきたい前提をまとめます。各項目の数値や日付は確認中・仮表示です。"/>
+    <ul className="cards">${PAGES.map((p, i) => html`<${CategoryCard} key=${p.id} page=${p} index=${i}/>`)}</ul>
+    <p className="note" style=${{ marginTop: '16px' }}>最新の内容は必ず公式の募集要項で確認してください（公式リンク準備中）。</p>
+  </div>`;
+}
+
+function SectionBody({ s }){
+  switch (s.type){
+    case 'timeline': return html`<ol className="timeline" aria-label="出願から合格発表までの順番">${s.steps.map((st, i) => html`<li key=${i} className="tl-step">
+        <span className="tl-dot"><b>${i + 1}</b><i></i></span>
+        <span className="tl-card"><strong>${st.label}</strong><span className="tl-when">${st.when}</span><span>${st.desc}</span></span></li>`)}</ol>
+      <p className="figcap">図：院試の流れ（日付はすべて確認中・仮表示）</p>`;
+    case 'diagram': return html`<figure style=${{ margin: 0 }}>
+        <div className="diagram">
+          <div className="dg-box"><h3>① 専門科目<span className="pending">5科目・仮</span></h3>
+            <div className="subj-chips">${C.survey.subjects.map(x => html`<span key=${x.id} className="subj-chip">${x.label}</span>`)}</div></div>
+          <div className="dg-arrow" aria-hidden="true"><${Icon} name="arrow"/></div>
+          <div className="dg-box"><h3>② 科目を選ぶ<span className="pending">3科目・仮</span></h3>
+            <div className="subj-chips"><span className="subj-chip on">科目A</span><span className="subj-chip on">科目B</span><span className="subj-chip on">科目C</span></div>
+            <p className="note">選び方の例（実際の選択とは関係ありません）</p></div>
+          <div className="dg-arrow" aria-hidden="true"><${Icon} name="arrow"/></div>
+          <div className="dg-box"><h3>③ 各科目の大問を選ぶ<span className="pending">4問中3問・仮</span></h3>
+            <div className="q-grid" aria-label="大問1から4のうち3つを選ぶ例">${[1, 2, 3, 4].map(n => html`<span key=${n} className=${'q-cell' + (n !== 2 ? ' on' : '')}>大問${n}</span>`)}</div>
+            <p className="note">色付き＝解く大問の例</p></div>
+        </div>
+        <figcaption className="figcap">図：筆記試験の選び方（構成案時点の聞き取りによる仮表示。現行制度として確定したものではありません）</figcaption>
+      </figure>`;
+    case 'table': return html`<div className="table-wrap" tabIndex="0" role="region" aria-label=${s.heading + '（表）'}>
+        <table className="wide"><thead><tr>${s.columns.map((c, i) => html`<th key=${i} scope="col">${c}</th>`)}</tr></thead>
+        <tbody>${s.rows.map((r, i) => html`<tr key=${i}>${r.map((c, j) => j === 0 ? html`<th key=${j} scope="row">${c}</th>` : html`<td key=${j}>${c}</td>`)}</tr>`)}</tbody></table></div>
+      <p className="scroll-hint">表は横にスクロールできます →</p>`;
+    case 'facts': return html`<dl className="facts-dl">${s.facts.map((f, i) => html`<${React.Fragment} key=${i}><dt>${f[0]}</dt><dd>${f[1]}</dd><//>`)}</dl>`;
+    case 'list': return html`<div className="prose"><ul className="bullets">${s.items.map((t, i) => html`<li key=${i}>${t}</li>`)}</ul>
+        ${s.link && html`<p><${NavLink} route=${s.link.route} anchor=${s.link.anchor}>${s.link.label} →<//></p>`}</div>`;
+    case 'steps': return html`<ol className="numbered">${s.items.map((t, i) => html`<li key=${i}>${t}</li>`)}</ol>`;
+    default: return html`<div className="prose">${s.body.map((t, i) => html`<p key=${i}>${t}</p>`)}</div>`;
+  }
+}
+
+function Toc({ page }){
+  const items = [{ id: 'summary', label: '要点のまとめ' }].concat(page.sections.map(s => ({ id: s.id, label: s.heading })), [{ id: 'history', label: '更新履歴' }]);
+  return html`<ol className="toc">${items.map(it => html`<li key=${it.id}><a href=${'#' + it.id} onClick=${e => { e.preventDefault(); scrollToAnchor(it.id); }}>${it.label}</a></li>`)}</ol>`;
+}
+
+function BasicDetail({ page }){
+  const { navigate, route } = useNav();
+  const compact = useMedia('(max-width: 1023px)');
+  const idx = PAGES.findIndex(p => p.id === page.id);
+  const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+  const M = C.basicMeta;
+  const related = PAGES.filter(p => p.id !== page.id && p !== prev && p !== next).slice(0, 2);
+  return html`<div className="container page">
+    <${Breadcrumbs} items=${[{ label: 'ホーム', route: 'home' }, { label: '基本情報', route: 'basic' }, { label: page.title }]}/>
+    <${BackLink} route="basic" label="基本情報の一覧に戻る"/>
+    <div className="detail-grid">
+      <article className="detail-main">
+        <${PageHead} part=${html`<${Part1}/>`} tags=${html`<span className="tag">本文は仮文です</span>`} title=${page.title} lead=${page.intro}/>
+        <dl className="meta">
+          <div><dt>対象年度</dt><dd>${M.year}</dd></div>
+          <div><dt>情報確認日</dt><dd>${M.checked}</dd></div>
+          <div><dt>出典</dt><dd>${M.source}</dd></div>
+          <div className="meta-link">${M.officialUrl
+            ? html`<a className="btn btn-sub btn-sm" href=${M.officialUrl} target="_blank" rel="noopener">公式の募集要項</a>`
+            : html`<button type="button" className="btn btn-sm" disabled><${Icon} name="link"/>公式リンク準備中</button>`}</div>
+        </dl>
+        ${compact && html`<${MiniToc} items=${[['summary', '要点のまとめ']].concat(page.sections.map(s => [s.id, s.heading]))}/>`}
+        <section className="summary" aria-labelledby="summary"><h2 id="summary">要点のまとめ</h2>
+          <ul>${page.points.map((p, i) => html`<li key=${i}>${p}</li>`)}</ul></section>
+        ${page.sections.map(s => html`<section key=${s.id} className="doc-sec" aria-labelledby=${s.id}><h2 id=${s.id}>${s.heading}</h2><${SectionBody} s=${s}/></section>`)}
+        <section className="doc-sec" aria-labelledby="history"><h2 id="history">更新履歴</h2>
+          <ul className="history">${C.basicHistory.map((h, i) => html`<li key=${i}><time>${h.date}</time><span>${h.text}</span></li>`)}</ul></section>
+        <div className="report">
+          <p>内容の誤りや、新しい情報に気づいたら教えてください（非公開で受け付けます）。</p>
+          <button type="button" className="btn btn-sub btn-sm" onClick=${() => navigate('about', 'contact', { prefill: { type: 'report', page: 'basic-' + page.id } })}><${Icon} name="flag"/>誤り・更新情報を報告</button>
+        </div>
+        <nav className="pager" aria-label="前後のページ">
+          ${prev ? html`<${NavLink} route=${'basic-' + prev.id}><span className="dir"><${Icon} name="left"/>前のページ</span><b>${prev.title}</b><//>` : html`<span></span>`}
+          ${next ? html`<${NavLink} route=${'basic-' + next.id} className="next"><span className="dir">次のページ<${Icon} name="right"/></span><b>${next.title}</b><//>` : html`<${NavLink} route="subjects" className="next"><span className="dir">次は第2部<${Icon} name="right"/></span><b>選択科目</b><//>`}
+        </nav>
+        <div className="page-end"><${BackLink} route="basic" label="基本情報の一覧に戻る"/></div>
+        <${RelatedLinks} links=${related.map(p => ({ route: 'basic-' + p.id, label: '基本情報：' + p.title })).concat([{ route: 'voices', label: '先輩たちの声（架空データ）' }])}/>
+      </article>
+      ${!compact && html`<aside className="detail-aside" aria-label="補助ナビゲーション"><div className="aside-sticky">
+        <nav className="aside-block" aria-label="このページの目次"><h2>このページの目次</h2><${Toc} page=${page}/></nav>
+        <nav className="aside-block" aria-label="基本情報のページ"><h2>基本情報のページ</h2>
+          <ul className="side-list">${PAGES.map(p => html`<li key=${p.id}><${NavLink} route=${'basic-' + p.id} current=${route === 'basic-' + p.id}><${Icon} name=${p.icon}/>${p.title}<//></li>`)}</ul></nav>
+      </div></aside>`}
+    </div>
+  </div>`;
+}
+
+/* =====================================================================
+   Survey aggregation (all demo data). Privacy rules:
+   - groups with fewer than minGroup answers are not shown
+   - when a single cell is hidden in a set that sums to a known total, the smallest other
+     cell is also hidden so the hidden one can't be recovered by subtraction
+   - "all years" pools only years that themselves have ≥ minGroup answers
+===================================================================== */
+const S = C.survey, MIN = S.minGroup;
+const KEY2ID = Object.fromEntries(S.subjects.map(s => [s.key, s.id]));
+const RESP = S.raw.map((line, idx) => {
+  const [year, kei, start, subs, score, oral, cm] = line.split('|');
+  const picks = subs.split(' ').map((t, r) => ({ subj: KEY2ID[t[0]], qs: t.slice(1).split('').map(Number), rank: r + 1 }));
+  picks.forEach(p => { const pool = S.materials[p.subj]; p.material = pool[(idx + p.rank) % pool.length]; });
+  return { year, kei: +kei, start: +start, picks, score: KEY2ID[score], oral: oral.split('').map(Number), comment: cm === '-' ? null : S.comments[+cm] };
+});
+function suppress(values, sumKnown = true){
+  const hidden = values.map(v => v > 0 && v < MIN);
+  let secondary = false;
+  if (sumKnown && hidden.filter(Boolean).length === 1){
+    let m = -1;
+    values.forEach((v, i) => { if (!hidden[i] && v > 0 && (m < 0 || v < values[m])) m = i; });
+    if (m >= 0){ hidden[m] = true; secondary = true; }
+  }
+  return { values, hidden, secondary };
+}
+const subjCounts = rows => S.subjects.map(s => rows.filter(r => r.picks.some(p => p.subj === s.id)).length);
+function aggregate(year, subj){
+  let base, excluded = [];
+  if (year === 'all'){
+    const ok = S.years.filter(y => RESP.filter(r => r.year === y.v).length >= MIN).map(y => y.v);
+    excluded = S.years.filter(y => !ok.includes(y.v)).map(y => y.label);
+    base = RESP.filter(r => ok.includes(r.year));
+  } else base = RESP.filter(r => r.year === year);
+  let rows = base, blocked = null;
+  if (base.length < MIN) blocked = 'few';
+  if (!blocked && subj !== 'all'){
+    rows = base.filter(r => r.picks.some(p => p.subj === subj));
+    const parent = suppress(subjCounts(base));
+    if (rows.length < MIN) blocked = 'few';
+    else if (parent.hidden[S.subjects.findIndex(s => s.id === subj)]) blocked = 'derive';
+  }
+  if (blocked) return { blocked, excluded };
+  const n = rows.length;
+  const count = (arr, fn) => arr.map((_, i) => rows.filter(r => fn(r, i)).length);
+  const subjSup = suppress(subjCounts(rows));
+  const visibleSubj = S.subjects.map((s, i) => subjSup.values[i] >= MIN && !subjSup.hidden[i]);
+  const perSubject = S.subjects.map((s, i) => {
+    if (!visibleSubj[i]) return null;
+    const ps = rows.map(r => r.picks.find(p => p.subj === s.id)).filter(Boolean);
+    return {
+      qs: suppress([1, 2, 3, 4].map(q => ps.filter(p => p.qs.includes(q)).length)),
+      rank: suppress([1, 2, 3].map(k => ps.filter(p => p.rank === k).length)),
+      materials: Array.from(new Set(ps.map(p => p.material)))
+    };
+  });
+  const comments = rows.map(r => r.comment).filter(Boolean);
+  return {
+    n, excluded,
+    kei: suppress(count(S.kei, (r, i) => r.kei === i)),
+    start: suppress(count(S.starts, (r, i) => r.start === i)),
+    subj: subjSup, perSubject,
+    score: suppress(count(S.subjects, (r, i) => r.score === S.subjects[i].id)),
+    oral: suppress(count(S.oral, (r, i) => r.oral.includes(i)), false),
+    comments: comments.length >= MIN ? comments.slice(0, 6) : null
+  };
+}
+
+const HIDDEN_TXT = '回答数が少ないため表示していません';
+function HiddenNotice({ reason }){
+  return html`<div className="hidden-notice" role="note"><${Icon} name="eyeoff"/>
+    <div><strong>${HIDDEN_TXT}</strong>
+    <span className="note">${reason === 'derive' ? 'この条件では、ほかの表で非表示にしている人数が逆算できてしまうため、まとめて非表示にしています。' : '選んだ条件の回答が3人未満のため、数値・グラフ・コメントを表示しません。'}</span></div></div>`;
+}
+function BarList({ labels, sup, unit = '人', label }){
+  const max = Math.max(1, ...sup.values.filter((v, i) => !sup.hidden[i]));
+  return html`<div><ul className="barlist" aria-label=${label}>${labels.map((l, i) => {
+      const h = sup.hidden[i], v = sup.values[i];
+      return html`<li key=${i} className=${'bar-row' + (h ? ' is-hidden' : '')}>
+        <span className="bar-label">${l}</span>
+        <span className="bar-track" title=${h ? HIDDEN_TXT : l + '：' + v + unit}>
+          ${h ? html`<span className="bar-hidden-txt">${HIDDEN_TXT}</span>` : html`<span className="bar-fill" style=${{ width: (v / max * 100) + '%' }}></span>`}</span>
+        <span className="bar-val">${h ? '—' : v + unit}</span></li>`; })}</ul>
+    ${sup.secondary && html`<p className="secondary-note" style=${{ marginTop: '8px' }}>※ 合計からの逆算を防ぐため、3人以上の項目も一部あわせて非表示にしています。</p>`}</div>`;
+}
+function VCard({ id, title, desc, children, tag }){
+  return html`<section className="vcard" aria-labelledby=${id}>
+    <div className="vcard-head"><h3 id=${id}>${title}</h3>${tag}<${DemoTag}/></div>
+    ${desc && html`<p className="vcard-desc">${desc}</p>`}
+    ${children}
+  </section>`;
+}
+function VGroup({ id, q, title, children }){
+  return html`<section className="vgroup" aria-labelledby=${id + '-h'}><div className="vgroup-head" id=${id}><span className="q-badge">${q}</span><h2 id=${id + '-h'}>${title}</h2></div>${children}</section>`;
+}
+
+function Voices(){
+  const [year, setYear] = useState('all');
+  const [subj, setSubj] = useState('all');
+  const A = useMemo(() => aggregate(year, subj), [year, subj]);
+  const yearLabel = year === 'all' ? '全年度' : S.years.find(y => y.v === year).label;
+  const subjLabel = subj === 'all' ? 'すべての回答者' : S.subjects.find(s => s.id === subj).label + 'を選んだ回答者';
+  const blocked = A.blocked;
+  const presets = [
+    { label: 'すべて表示できる状態', y: 'all', s: 'all' },
+    { label: '一部が非表示になる状態', y: '2025', s: 'all' },
+    { label: '全体が非表示になる状態', y: '2024以前', s: 'all' }
+  ];
+  const singleYear = year !== 'all';
+  return html`<div className="container page">
+    <${Breadcrumbs} items=${[{ label: 'ホーム', route: 'home' }, { label: '先輩たちの声' }]}/>
+    <${PageHead} part=${html`<${Part2}/>`} tags=${html`<${DemoTag}/>`} title="先輩たちの声"
+      lead="早稲田の院試（内部受験）を受けた応化の先輩へのアンケートを、受験の流れの順に集計して示します。個人のプロフィールではなく、集計結果だけを載せます。"/>
+    <div className="demo-box" role="note">
+      <strong>このページの数値はすべて架空のデモデータです（レイアウト確認用）</strong>
+      <ul>
+        <li>実際の合格率や出題傾向を示すものではありません。特定の科目を選ぶと合格しやすい、という意味もありません。</li>
+        <li>結果はGPAやこれまでの学習の蓄積にも左右されます。鵜呑みにせず、参考として見てください。</li>
+        <li>回答が3人未満の集計は表示しません。問題文・出題内容や、資料そのものは掲載しません。</li>
+      </ul>
+    </div>
+
+    <section className="section box filters" aria-labelledby="h-filter" id="filters">
+      <h2 id="h-filter" style=${{ fontSize: '18px' }}>絞り込み</h2>
+      <div className="filter-row"><span className="filter-label" id="lb-year">回答年度</span>
+        <div className="seg" role="group" aria-labelledby="lb-year">${[{ v: 'all', label: '全年度' }].concat(S.years).map(y => html`<button key=${y.v} type="button" aria-pressed=${year === y.v ? 'true' : 'false'} onClick=${() => setYear(y.v)}>${y.label}</button>`)}</div></div>
+      <div className="filter-row"><span className="filter-label" id="lb-subj">選んだ科目</span>
+        <div className="seg" role="group" aria-labelledby="lb-subj">${[{ id: 'all', label: 'すべて' }].concat(S.subjects).map(s => html`<button key=${s.id} type="button" aria-pressed=${subj === s.id ? 'true' : 'false'} onClick=${() => setSubj(s.id)}>${s.label}</button>`)}</div></div>
+      <div className="state-demo">
+        <span className="note">表示状態の確認（デモ用のショートカット）</span>
+        <div className="seg">${presets.map(p => html`<button key=${p.label} type="button" aria-pressed=${year === p.y && subj === p.s ? 'true' : 'false'} onClick=${() => { setYear(p.y); setSubj(p.s); }}>${p.label}</button>`)}</div>
+      </div>
+    </section>
+
+    <section className="section box" aria-labelledby="h-count" aria-live="polite">
+      <div className="vcard-head" style=${{ marginBottom: '12px' }}><h2 id="h-count" style=${{ fontSize: '18px', marginRight: 'auto' }}>回答件数と集計条件</h2><${DemoTag}/></div>
+      <div className="condition">
+        <div className="count-big"><b>${blocked ? '3人未満' : A.n + '件'}</b><span>${blocked ? (A.blocked === 'derive' ? '件数は表示していません' : '集計を表示できません') : '集計に使った回答（架空）'}</span></div>
+        <ul className="cond-list">
+          <li><span className="k">回答年度</span><span>${yearLabel}</span></li>
+          <li><span className="k">対象</span><span>${subjLabel}</span></li>
+          <li><span className="k">表示ルール</span><span>回答が3人未満の集計群は表示しません（絞り込み後も同じ）</span></li>
+          ${year === 'all' && A.excluded.length > 0 && html`<li><span className="k">注意</span><span>回答が3人未満の年度（${A.excluded.join('・')}）は、全年度の集計にも含めていません</span></li>`}
+        </ul>
+      </div>
+      ${!blocked && html`<div style=${{ marginTop: '18px' }}><h3 style=${{ fontSize: '16px', marginBottom: '8px' }}>回答者の所属の系<span className="pending">区分は要確認</span></h3>
+        <${BarList} labels=${S.kei} sup=${A.kei} label="所属の系の人数"/></div>`}
+    </section>
+
+    ${blocked && html`<div className="section"><${HiddenNotice} reason=${blocked}/></div>`}
+
+    <${VGroup} id="prep" q="設問3" title="準備の進め方">
+      <${VCard} id="h-start" title="勉強を始めた時期" desc="院試の勉強を始めた時期ごとの人数です。時期の区切りは試験日程に合わせて調整予定です。">
+        ${blocked ? html`<${HiddenNotice} reason=${blocked}/>` : html`<${BarList} labels=${S.starts} sup=${A.start} label="勉強を始めた時期の人数"/>`}
+      <//>
+    <//>
+
+    <${VGroup} id="written" q="設問4〜7" title="筆記試験">
+      <${VCard} id="h-subj" title="選んだ科目と大問" desc=${singleYear ? '科目ごとに、選んだ人数と、解いた大問の人数を示します。大問番号はその年度の問題の番号で、問題文や出題内容は載せません。' : '科目ごとに選んだ人数を示します。大問の内訳は年度ごとに異なるため、回答年度を1つ選ぶと表示されます。'}>
+        ${blocked ? html`<${HiddenNotice} reason=${blocked}/>` : html`
+          <div className="table-wrap" tabIndex="0" role="region" aria-label="科目選択の集計表">
+            <table className="wide"><thead><tr><th scope="col">科目</th><th scope="col" className="num">選んだ人数</th>
+              ${singleYear ? [1, 2, 3, 4].map(q => html`<th key=${q} scope="col" className="num">大問${q}</th>`) : html`<th scope="col">大問の内訳</th>`}</tr></thead>
+            <tbody>${S.subjects.map((s, i) => {
+              const ps = A.perSubject[i];
+              if (!ps) return html`<tr key=${s.id}><th scope="row">${s.label}</th><td colSpan=${singleYear ? 5 : 2}><span className="hidden-cell">${A.subj.values[i] === 0 ? '選んだ人はいません' : HIDDEN_TXT}</span></td></tr>`;
+              return html`<tr key=${s.id}><th scope="row">${s.label}</th><td className="num">${A.subj.values[i]}人</td>
+                ${singleYear ? ps.qs.values.map((v, q) => html`<td key=${q} className="num">${ps.qs.hidden[q] ? html`<span className="hidden-cell">—</span>` : v + '人'}</td>`) : html`<td className="note">年度を選ぶと表示</td>`}</tr>`; })}</tbody></table></div>
+          <p className="scroll-hint">表は横にスクロールできます →</p>
+          <p className="secondary-note">「—」は3人未満、または逆算を防ぐために非表示にしている欄です。${A.subj.secondary ? '合計からの逆算を防ぐため、3人以上の科目も一部あわせて非表示にしています。' : ''}毎年同じ大問が出ることを示すものではありません。</p>`}
+      <//>
+
+      <div className="two-col" id="time" style=${{ marginTop: '14px' }}>
+        <${VCard} id="h-rank" title="科目ごとの勉強時間の順位" desc="選んだ3科目のうち、どの科目に多く時間をかけたかの順位です。科目ごとに3人以上集まった場合だけ示します。">
+          ${blocked ? html`<${HiddenNotice} reason=${blocked}/>` : html`
+            <div className="table-wrap" tabIndex="0" role="region" aria-label="勉強時間の順位の集計表">
+              <table><thead><tr><th scope="col">科目</th><th scope="col">1番多い</th><th scope="col">2番目</th><th scope="col">3番目</th></tr></thead>
+              <tbody>${S.subjects.map((s, i) => {
+                const ps = A.perSubject[i];
+                if (!ps) return html`<tr key=${s.id}><th scope="row">${s.label}</th><td colSpan="3"><span className="hidden-cell">${A.subj.values[i] === 0 ? '選んだ人はいません' : HIDDEN_TXT}</span></td></tr>`;
+                const max = Math.max(1, ...ps.rank.values);
+                return html`<tr key=${s.id}><th scope="row">${s.label}</th>${ps.rank.values.map((v, k) => html`<td key=${k}>${ps.rank.hidden[k] ? html`<span className="hidden-cell">—</span>` : html`<span className="rank-cell"><span className="mini"><i style=${{ width: (v / max * 100) + '%' }}></i></span><b>${v}人</b></span>`}</td>`)}</tr>`; })}</tbody></table></div>`}
+        <//>
+        <${VCard} id="h-score" title="得点源にした科目" desc="「この科目で点を取ろう」と考えていた科目です（1人1つ）。">
+          ${blocked ? html`<${HiddenNotice} reason=${blocked}/>` : html`<${BarList} labels=${S.subjects.map(s => s.label)} sup=${A.score} label="得点源にした科目の人数"/>`}
+        <//>
+      </div>
+
+      <div style=${{ marginTop: '14px' }} id="materials">
+        <${VCard} id="h-mat" title="科目別の参考資料" desc="役に立った資料の名前だけを紹介します。資料そのもの（レジュメ・教科書の中身）は掲載・配布しません。">
+          ${blocked ? html`<${HiddenNotice} reason=${blocked}/>` : html`<div>${S.subjects.map((s, i) => {
+            const ps = A.perSubject[i];
+            return html`<${Accordion} key=${s.id} id=${'mat-' + s.id} level=${4} title=${s.label} meta=${ps ? '資料名 ' + ps.materials.length + '件' : '非表示'}>
+              ${ps ? html`<ul className="materials">${ps.materials.map(m => html`<li key=${m}>${m}</li>`)}</ul>` : html`<p className="hidden-cell">${HIDDEN_TXT}</p>`}<//>`; })}</div>`}
+        <//>
+      </div>
+    <//>
+
+    <${VGroup} id="oral" q="設問8" title="口頭試験">
+      <${VCard} id="h-oral" title="口頭試験で聞かれたことの種類" desc="聞かれた内容そのものではなく、種類だけを集計しています。複数選択のため、合計は回答件数と一致しません。">
+        ${blocked ? html`<${HiddenNotice} reason=${blocked}/>` : html`<${BarList} labels=${S.oral} sup=${A.oral} unit="件" label="口頭試験で聞かれたことの種類の件数"/>`}
+      <//>
+    <//>
+
+    <${VGroup} id="messages" q="設問9" title="後輩へのメッセージ">
+      <${VCard} id="h-msg" title="後輩へのひとこと" desc="自由記述は、応用化学委員と発起人が表現を整えて掲載します。回答者の年度や系などは添えません。">
+        ${blocked || !A.comments ? html`<${HiddenNotice} reason=${blocked || 'few'}/>` : html`<ul className="comments">${A.comments.map((c, i) => html`<li key=${i} className="comment"><p>${c}</p><footer>表現を整えて掲載（架空のコメント）</footer></li>`)}</ul>`}
+      <//>
+    <//>
+  </div>`;
+}
+
+function Faq(){
+  return html`<div className="container page">
+    <${Breadcrumbs} items=${[{ label: 'ホーム', route: 'home' }, { label: 'よくある質問' }]}/>
+    <${PageHead} part=${html`<span className="tag">サイトについて</span>`} tags=${html`<span className="tag">回答は仮文です</span>`} title="よくある質問" lead="サイトの使い方や、情報の扱いについての質問をまとめています。質問を押すと回答が開きます。"/>
+    <div className="faq-layout">
+      <nav className="faq-cats aside-block" aria-label="質問のカテゴリ"><h2>カテゴリ</h2>
+        <ul className="side-list">${C.faq.map(c => html`<li key=${c.id}><a href=${'#' + c.id} onClick=${e => { e.preventDefault(); scrollToAnchor(c.id); }}><${Icon} name=${c.icon}/>${c.cat}</a></li>`)}</ul></nav>
+      <div>${C.faq.map(c => html`<section key=${c.id} className="faq-cat" aria-labelledby=${c.id}>
+        <h2 id=${c.id}><${Icon} name=${c.icon}/>${c.cat}</h2>
+        ${c.items.map((it, i) => html`<${Accordion} key=${i} id=${c.id + '-' + i} level=${3} title=${html`<span className="qa-q">Q</span>${it.q}`}>
+          <p className="qa-a"><span className="qa-q">A</span><span>${it.a}</span></p><//>`)}
+      </section>`)}</div>
+    </div>
+  </div>`;
+}
+
+const FORM_TYPES = [{ v: 'question', l: '質問' }, { v: 'report', l: '誤り・更新情報の報告' }, { v: 'request', l: '掲載してほしい内容の要望' }, { v: 'other', l: 'その他' }];
+const FORM_PAGES = [{ v: '', l: '指定しない' }].concat(PAGES.map(p => ({ v: 'basic-' + p.id, l: '基本情報：' + p.title })), SUBJECTS.map(p=>({v:'subject-'+p.id,l:'選択科目：'+p.name})), [{ v: 'voices', l: '先輩たちの声' }, { v: 'faq', l: 'よくある質問' }]);
+function ContactForm({ prefill }){
+  const empty = { nickname: '', type: '', page: '', body: '' };
+  const [v, setV] = useState(empty);
+  const [err, setErr] = useState({});
+  const [done, setDone] = useState(false);
+  const refs = { type: useRef(null), body: useRef(null) };
+  useEffect(() => { if (prefill){ setV(x => ({ ...x, type: prefill.type || x.type, page: prefill.page || x.page })); setDone(false); } }, [prefill && prefill.nonce]);
+  const set = k => e => { setV({ ...v, [k]: e.target.value }); if (err[k]) setErr({ ...err, [k]: null }); setDone(false); };
+  const submit = e => {
+    e.preventDefault();
+    const er = {};
+    if (!v.type) er.type = '問い合わせの種類を選んでください。';
+    if (v.body.trim().length < 10) er.body = '内容を10文字以上で入力してください。';
+    setErr(er);
+    if (Object.keys(er).length){ const k = er.type ? 'type' : 'body'; refs[k].current && refs[k].current.focus(); setDone(false); return; }
+    setDone(true);
+  };
+  return html`<form onSubmit=${submit} noValidate aria-describedby="form-demo-note">
+    <div className="demo-box" id="form-demo-note" role="note"><strong>デモのため送信されません</strong><span>入力内容の確認だけを行います。内容はどこにも送信・保存されません。</span></div>
+    <div className="field"><label htmlFor="f-nick">ニックネーム<span className="opt">任意</span></label>
+      <input id="f-nick" type="text" value=${v.nickname} onChange=${set('nickname')} maxLength="30" aria-describedby="f-nick-h"/>
+      <span className="hint" id="f-nick-h">本名や学籍番号は入力しないでください。</span></div>
+    <div className="field"><label htmlFor="f-type">問い合わせの種類<span className="req">必須</span></label>
+      <select id="f-type" ref=${refs.type} value=${v.type} onChange=${set('type')} aria-invalid=${err.type ? 'true' : 'false'} aria-describedby=${err.type ? 'f-type-e' : undefined}>
+        <option value="">選んでください</option>${FORM_TYPES.map(t => html`<option key=${t.v} value=${t.v}>${t.l}</option>`)}</select>
+      ${err.type && html`<span className="err" id="f-type-e">${err.type}</span>`}</div>
+    <div className="field"><label htmlFor="f-page">関係するページ<span className="opt">任意</span></label>
+      <select id="f-page" value=${v.page} onChange=${set('page')}>${FORM_PAGES.map(t => html`<option key=${t.v} value=${t.v}>${t.l}</option>`)}</select></div>
+    <div className="field"><label htmlFor="f-body">内容<span className="req">必須</span></label>
+      <textarea id="f-body" ref=${refs.body} value=${v.body} onChange=${set('body')} maxLength="1000" aria-invalid=${err.body ? 'true' : 'false'} aria-describedby=${'f-body-h' + (err.body ? ' f-body-e' : '')}></textarea>
+      <span className="hint" id="f-body-h">${v.body.length}/1000文字。回答は非公開で行い、公開のコメント欄はありません。</span>
+      ${err.body && html`<span className="err" id="f-body-e">${err.body}</span>`}</div>
+    <div className="form-actions">
+      <button type="submit" className="btn">入力内容を確認する</button>
+      <button type="button" className="btn btn-sub" onClick=${() => { setV(empty); setErr({}); setDone(false); }}>入力をクリア</button>
+    </div>
+    <div role="status" aria-live="polite">${done && html`<div className="status-box"><strong>入力内容に問題はありません</strong>
+      <span>デモのため、この内容は送信も保存もされていません。種類：${FORM_TYPES.find(t => t.v === v.type).l}${v.page ? '／' + FORM_PAGES.find(t => t.v === v.page).l : ''}</span></div>`}</div>
+  </form>`;
+}
+
+function About({ prefill }){
+  const compact = useMedia('(max-width: 1023px)');
+  const toc = [['operator', '運営元と位置づけ'], ['news', 'お知らせ・更新履歴'], ['policy', '情報の確認・更新方針'], ['survey-rules', 'アンケート結果の公開ルール'], ['access', '閲覧範囲について'], ['privacy', 'プライバシー方針（仮）'], ['contact', '質問・誤り報告フォーム']];
+  return html`<div className="container page">
+    <${Breadcrumbs} items=${[{ label: 'ホーム', route: 'home' }, { label: '運営について' }]}/>
+    <div className="about-grid">
+      <div className="about-main">
+        <${PageHead} part=${html`<span className="tag">サイトについて</span>`} title="運営について・問い合わせ" lead="このサイトの運営元、情報の扱い方、問い合わせの方法をまとめています。"/>
+        <section className="doc-sec" aria-labelledby="operator"><h2 id="operator">運営元と位置づけ</h2>
+          <dl className="facts-dl"><dt>運営元</dt><dd>${C.site.operator}</dd><dt>位置づけ</dt><dd>応用化学科の学生向けの、学科内限定・非営利の情報共有</dd>
+            <dt>公式性</dt><dd><strong>大学・学科の公式情報ではありません。</strong>大学の公式ロゴは使用していません。</dd></dl></section>
+        <section className="doc-sec" aria-labelledby="news"><h2 id="news">お知らせ・更新履歴</h2>
+          <ul className="news">${C.home.news.map((n, i) => html`<li key=${i}><time>${n.date}</time><span><span className="tag">${n.cat}</span></span><p>${n.text}</p></li>`)}</ul></section>
+        <section className="doc-sec" aria-labelledby="policy"><h2 id="policy">情報の確認・更新方針</h2>
+          <ul className="bullets"><li>基本情報は発起人が調べてまとめ、日程や形式が変わったときに見直します。</li><li>各ページに対象年度・情報確認日・出典を表示します。確認できていない内容は「確認中」と表示します。</li>
+            <li>誤りを直したときは、ページ末の更新履歴に日付と内容を記録します。</li><li>先輩アンケートは毎年集計し、年度ごとに積み上げます。</li></ul></section>
+        <section className="doc-sec" aria-labelledby="survey-rules"><h2 id="survey-rules">アンケート結果の公開ルール</h2>
+          <ul className="bullets"><li>回答が3人未満のグループ（年度・系・科目など）は結果を表示しません。</li><li>大問の選び方は年度ごとに示し、出題傾向の断定はしません。</li>
+            <li>科目別の過去問・大問例の欄は準備中です。掲載内容・出典を確認してから追加します。レジュメ・教科書は名前の紹介までとします。</li><li>統計に添えるコメントは、応用化学委員と発起人が一般的な表現で書きます。</li></ul></section>
+        <section className="doc-sec" aria-labelledby="access"><h2 id="access">閲覧範囲について</h2>
+          <div className="prose"><p>本番では、学校アカウントで閲覧を限定する仕組みを、公開するサービス側で別に設定する予定です。</p>
+            <p><strong>このデモには閲覧制限が入っていません。</strong>画面上の表示・非表示の切り替えは、閲覧制限の代わりにはなりません。「転載禁止」の表示も、転載を技術的に防ぐものではありません。</p></div></section>
+        <section className="doc-sec" aria-labelledby="privacy"><h2 id="privacy">プライバシー方針（仮）<span className="pending">仮表示</span></h2>
+          <ul className="bullets"><li>問い合わせフォームで受け取るのは、ニックネーム（任意）・種類・内容だけを想定しています。</li><li>アンケートは匿名で集計し、メールアドレスは記録しません。</li>
+            <li>受け取った内容は運営元だけが確認し、公開しません。</li><li>正式な方針は、運営元で確認したうえで掲載します。</li></ul></section>
+        <section className="doc-sec" aria-labelledby="contact"><h2 id="contact">質問・誤り報告フォーム</h2>
+          <p className="note" style=${{ marginBottom: '14px' }}>質問や誤りの指摘は非公開で受け付けます。公開のコメント欄は設けていません。</p>
+          <${ContactForm} prefill=${prefill}/></section>
+        <div className="future" style=${{ marginTop: '36px' }}>第2部の選択科目ページは、基本情報・過去問の大問例・対策法・参考資料の掲載欄を用意しています。本文は今後執筆します。</div>
+      </div>
+      ${!compact && html`<aside aria-label="補助ナビゲーション"><div className="aside-sticky"><nav className="aside-block" aria-label="このページの目次"><h2>このページの目次</h2>
+        <ol className="toc">${toc.map(([id, l]) => html`<li key=${id}><a href=${'#' + id} onClick=${e => { e.preventDefault(); scrollToAnchor(id); }}>${l}</a></li>`)}</ol></nav></div></aside>`}
+    </div>
+  </div>`;
+}
+
+/* ---------- App ---------- */
+function App(){
+  const [route, setRoute] = useState(readHash);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [prefill, setPrefill] = useState(null);
+  const pending = useRef(null), first = useRef(true), menuBtn = useRef(null), routeRef = useRef(route);
+  routeRef.current = route;
+
+  const navigate = useCallback((r, anchor, opts) => {
+    if (opts && opts.prefill) setPrefill({ ...opts.prefill, nonce: Date.now() });
+    setMenuOpen(false);
+    if (r === routeRef.current){ setTimeout(() => scrollToAnchor(anchor), 30); return; }
+    pending.current = anchor || null;
+    try { history.pushState(null, '', '#' + r); } catch(e){}
+    setRoute(r);
+  }, []);
+
+  useEffect(() => { const on = () => { pending.current = null; setRoute(readHash()); }; window.addEventListener('popstate', on); window.addEventListener('hashchange', on);
+    return () => { window.removeEventListener('popstate', on); window.removeEventListener('hashchange', on); }; }, []);
+
+  useEffect(() => {
+    if (first.current){ first.current = false; return; }
+    const a = pending.current; pending.current = null;
+    requestAnimationFrame(() => {
+      if (a) scrollToAnchor(a);
+      else { window.scrollTo(0, 0); const h = document.querySelector('main h1'); if (h) h.focus({ preventScroll: true }); }
+    });
+  }, [route]);
+
+  const closeMenu = useCallback(() => { setMenuOpen(false); setTimeout(() => menuBtn.current && menuBtn.current.focus(), 0); }, []);
+  const compact = useMedia('(max-width: 1023px)');
+  useEffect(() => { if (!compact && menuOpen) setMenuOpen(false); }, [compact]);
+
+  let page;
+  if (route === 'home') page = html`<${Home}/>`;
+  else if (route === 'basic') page = html`<${BasicList}/>`;
+  else if (route.startsWith('basic-')) page = html`<${BasicDetail} key=${route} page=${PAGES.find(p => 'basic-' + p.id === route)}/>`;
+  else if (route === 'subjects') page = html`<${SubjectList}/>`;
+  else if (route.startsWith('subject-')) page = html`<${SubjectDetail} key=${route} subject=${SUBJECTS.find(p => 'subject-'+p.id === route)}/>`;
+  else if (route === 'voices') page = html`<${Voices}/>`;
+  else if (route === 'faq') page = html`<${Faq}/>`;
+  else page = html`<${About} prefill=${prefill}/>`;
+
+  return html`<${NavCtx.Provider} value=${{ route, navigate }}>
+    <${Header} menuOpen=${menuOpen} onMenu=${() => setMenuOpen(true)} menuBtnRef=${menuBtn}/>
+    <main id="main">${page}</main>
+    <${Footer}/>
+    ${menuOpen && html`<${Drawer} onClose=${closeMenu}/>`}
+  <//>`;
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(html`<${App}/>`);
+})();
+</script>
+
+</body></html>
